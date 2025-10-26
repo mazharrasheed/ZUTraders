@@ -72,12 +72,7 @@ class Final_Product(models.Model):
     ]
 
         productname=models.CharField(max_length=255,unique=True)
-        unit=models.CharField(max_length=50,choices=UNIT_CHOICES,default=NOS)
         category=models.ForeignKey(Finish_Product_Category,on_delete=models.RESTRICT)
-        company=models.ForeignKey(Company,on_delete=models.RESTRICT)
-        purchase=models.PositiveIntegerField(null=True,blank=True)
-        sale_rate=models.PositiveIntegerField(null=True,blank=True)
-        labour=models.FloatField(null=True,blank=True)
         product_status=models.BooleanField(default=False)
         is_deleted = models.BooleanField(default=False)
         product_slug=AutoSlugField(populate_from="productname",unique=True,null=True,default=None)

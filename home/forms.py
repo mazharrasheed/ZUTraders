@@ -97,8 +97,8 @@ class Finish_ProductForm(forms.ModelForm):
     category = forms.ModelChoiceField(queryset=Finish_Product_Category.objects.filter(is_deleted=False), empty_label="Select Category")
     class Meta:
         model = Final_Product
-        fields = ['productname','unit','category','company','purchase','sale_rate','labour' ]
-        labels={'productname':'Product Name','sale_rate':'Sale Rate'
+        fields = ['productname','category',]
+        labels={'productname':'Product Name',
                 }
 
         widgets = {
@@ -115,10 +115,7 @@ class Finish_ProductForm(forms.ModelForm):
 
         placeholders = {
             'productname': 'Enter product name',
-            'unit':'Select Unit',
-            'purchase':'Enter purchase rate',
-            'sale_rate':'Enter sale rate',
-            'labour':'Enter labur cost',
+            'category':'Select Category',
         }
         for field_name, placeholder in placeholders.items():
             self.fields[field_name].widget.attrs.update({'placeholder': placeholder})
@@ -128,8 +125,8 @@ class Finish_ProductForm(forms.ModelForm):
             self.fields[field_name].widget.attrs.update({'class': 'form-control'})  # Add class to widgets
             self.fields[field_name].label_tag = lambda label, tag=None, attrs=None, *args, **kwargs: f'<label class="fs-5" for="{self[field_name].id_for_label}">{label}</label>'
 
-        self.fields['category'].empty_label = "Select"
-        self.fields['company'].empty_label = "Select"
+        # self.fields['category'].empty_label = "Select Category"
+    
 
 
 class ProductForm(forms.ModelForm):
