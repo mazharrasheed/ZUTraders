@@ -37,6 +37,7 @@ def list_sales(request):
     if request.method== 'GET':
         customer = request.GET.get('customer')
         cash = request.GET.get('cash')
+        print(customer,cash)
         if customer:
             salereceipts = Sales_Receipt.objects.filter(is_cash=False)
         elif cash == "True":

@@ -148,21 +148,21 @@
               </li>
               {% endif %}
 
-              <!--{% if perms.home.view_sales_receipt %}-->
-              <!--<li class=" {% if request.path == '#' %} color-info {% endif %}">-->
-              <!--  <a href="/list-sales?cash=True">-->
-              <!--    <span class="pcoded-micon"><i class="ti-layout"></i><b>D</b></span>-->
-              <!--    <span class="pcoded-mtext fs-5" data-i18n="nav.dash.main">-->
-              <!--      <h5>Cash Sales</h5>-->
-              <!--    </span>-->
-              <!--    <span class="pcoded-mcaret"></span>-->
-              <!--  </a>-->
-              <!--</li>-->
-              <!--{% endif %}-->
+              {% if perms.home.view_sales_receipt %}
+              <li class=" {% if request.path == '#' %} color-info {% endif %}">
+               <a href="/list-sales?cash=True">
+                 <span class="pcoded-micon"><i class="ti-layout"></i><b>D</b></span>
+                 <span class="pcoded-mtext fs-5" data-i18n="nav.dash.main">
+                   <h5>Cash Sales</h5>
+                 </span>
+                 <span class="pcoded-mcaret"></span>
+               </a>
+              </li>
+              {% endif %}
 
               {% if perms.home.view_sales_receipt %}
               <li class=" {% if request.path == '#' %} color-info {% endif %}">
-                <a href="/list-sales?customer=Ture">
+                <a href="/list-sales?customer=True">
                   <span class="pcoded-micon"><i class="ti-view-list-alt"></i><b>D</b></span>
                   <span class="pcoded-mtext fs-5" data-i18n="nav.dash.main">
                     <h5>Customer Sales</h5>

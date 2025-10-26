@@ -656,15 +656,15 @@
                   </li>
                   {% endif %}
 
-                  <!--{% if perms.home.view_sales_receipt %}-->
-                  <!--<li class="{% if request.path == '/list-sales/' %} active {% endif %} ">-->
-                  <!--  <a href="/list-sales?cash=True">-->
-                  <!--    <span class="pcoded-micon"><i class="ti-angle-right"></i></span>-->
-                  <!--    <span class="pcoded-mtext fs-5" data-i18n="nav.basic-components.alert">Cash Sales</span>-->
-                  <!--    <span class="pcoded-mcaret"></span>-->
-                  <!--  </a>-->
-                  <!--</li>-->
-                  <!--{% endif %}-->
+                  {% if perms.home.view_sales_receipt %}
+                  <li class="{% if request.path == '/list-sales/' %} active {% endif %} ">
+                   <a href="/list-sales?cash=True">
+                     <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                     <span class="pcoded-mtext fs-5" data-i18n="nav.basic-components.alert">Cash Sales</span>
+                     <span class="pcoded-mcaret"></span>
+                   </a>
+                  </li>
+                  {% endif %}
 
                   {% if perms.home.view_sales_receipt %}
                   <li class="{% if request.path == '/list-sales/' %} active {% endif %} ">
