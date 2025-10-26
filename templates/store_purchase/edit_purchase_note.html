@@ -1,0 +1,254 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %} 
+
+{% block title %}
+Edit GRN 
+{% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'store/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+
+  .table-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #000;
+    background-color: #f8f9fa;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .btn {
+    margin: 5px;
+  }
+
+  .header-section,
+  .footer-section {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .footer-section button {
+    width: 100%;
+  }
+
+  .header-section div {
+    width: 45%;
+  }
+
+  .bg-dark {
+    background-color: #343a40 !important;
+  }
+
+  .text-light {
+    color: #fff !important;
+  }
+</style>
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="table-container">
+            <h3 class="text-center bg-dark text-light p-3">
+              Edit Goods Receipt Note
+            </h3>
+            <form id="grn-form" method="POST">
+              {% csrf_token %}
+              <div class="header-section">
+                <div>
+                  <h4>MASH Systems</h4>
+                  <h6>Gujranwala</h6>
+                  <h6>Phone: 0301-8742840</h6>
+                </div>
+                <div style="margin-right: 50px; width: 550px">
+                  <!-- <p>{{ form.project|as_crispy_field }}</p> -->
+                  <p><strong>Date:</strong> {{ grn.date }}</p>
+                </div>
+              </div>
+              <div class="card py">
+                <div class="table-responsive py-2">
+              <table>
+                <thead>
+                  <tr>
+                    <td>{{ product_form.product|as_crispy_field }}</td>
+                    <td>{{ product_form.quantity|as_crispy_field }}</td>
+                    <td>
+                      <button
+                        id="add-product"
+                        class="btn btn-primary btn-sm"
+                        type="button"
+                      >
+                        Add Prpduct
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="product-list">
+                  {% for product in products %}
+                  <tr>
+                    <td>{{ product.product }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>
+                      <button
+                        class="delete-product btn btn-danger"
+                        data-product-id="{{ product.product.id }}"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+              <button id="update-grn" class="btn btn-success">
+                Update GRN
+              </button>
+              <a href="/list-store-purchase/" class="btn btn-warning">Cancel Update</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // Initialize productList with existing products from the template
+  let productList = [
+      {% for product in products %}
+          { product: '{{ product.product.id }}', quantity: '{{ product.quantity }}' },
+      {% endfor %}
+  ];
+  // Initialize a list to track deleted products
+  let deletedProducts = [];
+  // Add product event listener
+  document.getElementById('add-product').addEventListener('click', function () {
+      const product = document.querySelector('select[name="product"]').value;
+      const quantity = document.querySelector('input[name="quantity"]').value;
+      if (!product) {
+          alert('Please select a product.');
+          return;
+      }
+      if (!quantity || quantity <= 0) {
+          alert('Please enter a valid quantity.');
+          return;
+      }
+      // Check if product is already in productList
+      const existingProduct = productList.find(item => item.product === product);
+      if (existingProduct) {
+          alert('This product has already been added.');
+          return;
+      }
+      productList.push({ product: product, quantity: quantity });
+      const row = `
+          <tr>
+              <td>${document.querySelector('select[name="product"] option:checked').textContent}</td>
+              <td>${quantity}</td>
+              <td>
+                  <button class="delete-product btn btn-danger" data-product-id="${product}">Delete</button>
+              </td>
+          </tr>
+      `;
+      document.getElementById('product-list').insertAdjacentHTML('beforeend', row);
+  });
+  // Delete product event listener
+  document.getElementById('product-list').addEventListener('click', function (event) {
+      if (event.target.classList.contains('delete-product')) {
+          const productId = event.target.getAttribute('data-product-id');
+          // Add product to the deleted list
+          if (!deletedProducts.includes(productId)) {
+              deletedProducts.push(productId);
+          }
+          productList = productList.filter(item => item.product !== productId);
+          event.target.closest('tr').remove();
+      }
+  });
+
+  // Update GRN event listener
+  document.getElementById('update-grn').addEventListener('click', function (event) {
+      event.preventDefault();
+
+  if (productList.length === 0) {
+    alert('Please check your product list is empty.');
+    return;
+  }
+
+      const form = document.getElementById('grn-form');
+      const formData = new FormData(form);
+
+      // Append all product information to the form
+      productList.forEach(product => {
+          formData.append('products[]', `${product.product}:${product.quantity}`);
+      });
+
+      // Send list of deleted product IDs
+      deletedProducts.forEach(productId => {
+          formData.append('deleted_products[]', productId);
+      });
+
+      fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRFToken': '{{ csrf_token }}',
+          }
+      })
+      .then(response => response.json().catch(() => {
+          throw new Error('Invalid JSON response from server.');
+      }))
+      .then(data => {
+          if (data.success) {
+              if (data.redirect_url) {
+                  window.location.href = data.redirect_url;
+              } else {
+                  alert('Update successful, but no redirect URL provided.');
+              }
+          } else {
+              alert(data.message || 'Failed to update GRN.');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('An unexpected error occurred.');
+      });
+  });
+</script>
+
+{% endblock body %}

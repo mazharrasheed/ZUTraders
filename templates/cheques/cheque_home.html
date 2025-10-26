@@ -1,0 +1,147 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Cheques {% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'accounts/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+
+<div class="row">
+  <div class="col-12">
+    <h2 class="text-center alert alert-info">Cheque List</h2>
+    <div class="card py">
+      <a href="{% url 'addcheque' %}" class=" fs-6 btn btn-primary col-3 m-3">Add Cheque/Receipt</a>
+      <div class="table-responsive py-2">
+        {% if cheques%}
+        <table class="table table-flush" id="datatable" >
+          <thead class="thead-light">
+            <tr>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Sr#
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Ref#
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Customer Name
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Cheque Number
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Amount
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Due Date
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Bank
+              </th>
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Status
+              </th>
+             
+              <th class=" fs-6 border-bottom fw-bolder text-center" scope="col">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody class="align-middle">
+            {% for cheque in cheques %}
+            <tr id="supplier-{{ cheque.id }}" class="{% if cheque.highlight_red %}  bg-danger text-light {% else %} bg-primary text-light {% endif %}">
+              <td class="fs-6 text-center" >{{ forloop.counter }}</td>
+              <td class="fs-6 text-center">{{ cheque.id }}</td>
+              <td class="fs-6 text-center">{{ cheque.customer }}</td>
+              <td class="fs-6 text-center ">{{ cheque.cheque_number }}</td>
+              <td class="fs-6 text-center ">{{ cheque.cheque_amount }}</td>
+              <td class="fs-6 text-center">{{ cheque.cheque_date }}</td>
+              <td class="fs-6 text-center">{{ cheque.bank_name }}</td>
+              <td class="fs-6 text-center">{% if data.status %} Cleared {% else %} Pendding {% endif %}</td>
+             
+              
+              <td class="text-center">
+
+                
+                
+                
+                {% if perms.home.change_cheque %}
+                <a class=" fs-6 btn btn-info" href="{% url 'editcheque' cheque.id %}">Edit</a>
+                {% else %}
+                <p>No edit permission </p>
+                {% endif%}
+
+                {% if perms.home.change_cheque %}
+                <button class=" fs-6 btn btn-warning delete-cheque" data-cheque-id="{{ cheque.id }}">
+                  Delete
+                </button>
+                {% else %}
+                <p>No delete permission </p>
+                {% endif%}
+
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <h4 class="text-center alert alert-warning">No Record Found</h4>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Handle the delete button click
+    $(".delete-cheque").on("click", function (event) {
+      event.preventDefault();
+
+      var chequeId = $(this).data("cheque-id");
+      var url = "{% url 'deletecheque' 0 %}".replace("0",chequeId);
+
+      if (confirm("Are you sure you want to delete this cheque?")) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            if (response.success) {
+              // Remove the gate pass row from the table
+              $("#cheque-" + chequeId).remove();
+              $("#display-msg").html(
+                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+              );
+
+              // alert(response.message);
+            } else {
+              alert("Failed to delete the cheque.");
+            }
+          },
+          error: function () {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock body %}

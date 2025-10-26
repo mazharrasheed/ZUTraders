@@ -1,0 +1,205 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Add Transaction {% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'accounts/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+  {{update}}
+  <div class="row">
+    <div class="col-md-8 offset-md-2  ">
+      <h2 class="text-center alert alert-info">Add Transaction</h2>
+      <form method="post" id="transactionForm">
+        {% csrf_token %}
+
+        <div class="row">
+          <div class="col-md-9">
+            <div class="row">
+          <div class="row">
+            {{ form.debit_account|as_crispy_field }}
+          </div>
+          <div class="row">
+            {{ form.credit_account|as_crispy_field }}
+          </div>
+          <div class="row">
+            {{ form.amount|as_crispy_field }}
+          </div>
+        </div>
+        </div>
+
+          <div class="col-md-3">
+            {{ form.description|as_crispy_field }}
+          </div>
+
+          <div class="col-md-5 mt-3">
+            <button type="button" class="btn btn-success" id="reviewTransaction">
+              {% if update %} Update Transaction {% else %} Add Transaction {% endif %}
+            </button> 
+            <a  class ="btn btn-warning"href="/accounts/">Accounts</a>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+
+  </div>
+   
+    <div class="col-12 mt-5">
+      <h2 class="text-center alert alert-info">Transaction Data</h2>
+      <div class="card py">
+        <div class="table-responsive py-2">
+      {% if mydata %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="5%">
+          <col width="20%">
+          <col width="15%">
+          <col width="15%">
+          <col width="15%">
+    
+          {% if update %} {% else %}<col width="15%"> {% endif %}
+      </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+           
+            {% if update %}   {% else %}  <th class="text-center fs-5" >Sr.No.</th> {% endif %}
+            <th class="text-center fs-5" >Ref.No.</th>
+            <th class="text-center fs-5" >Date</th>
+            <th class="text-center fs-5" >Description</th>
+            <th class="text-center fs-5" >Debit </th>
+            <th class="text-center fs-5" >Credit</th>
+            {% if update %} <th class="text-center fs-5" >amount</th> {% else %}   {% endif %} 
+            {% if update %}  {% else %}  <th >Actions</th> {% endif %} 
+          </tr>
+        </thead>
+        <tbody>
+           
+          {% if update %}
+          <tr>
+            <td class="text-center fs-5">{{mydata.id}}</td>
+            <td class="text-center fs-5">{{mydata.date}}</td>
+            <td class="text-center fs-5">{{mydata.description}}</td>
+            <td class="text-center fs-5">{{mydata.debit_account}}</td>
+            <td class="text-center fs-5">{{mydata.credit_account}}</td>
+            <td class="text-center fs-5">{{mydata.amount}}</a></td>
+          
+          </tr>
+          {% else %}
+
+          {% for data in mydata %}
+          <tr>
+            <td class="text-center fs-5">{{forloop.counter}}</td>
+            <td class="text-center fs-5">{{data.id}}</td>
+            <td class="text-center fs-5">{{data.date}}</td>
+            <td class="text-center fs-5">{{data.debit_account}} <br>
+            {{data.credit_account}}</td>
+            <td class="text-center fs-5">{{data.amount}}</a></td>
+            <td class="text-center fs-5"><br>{{data.amount}}</a></td>
+
+            {% if perms.home.change_transaction %}
+            <td  class="text-center fs-5"><a class="btn btn-sm btn-warning" href={% url 'edittransaction' id=data.id %}>Edit</a>
+              {% endif %}
+              {% if perms.home.delete_transaction %}
+              <a class=" btn btn-sm btn-danger" href={% url 'deletetransaction' id=data.id %}>Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+      </div>
+      </div>
+      {% else %}
+      <h4 class="text-center alert alert-warning">No Record Found</h4>
+
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<script>
+  $(document).ready(function(){
+
+    // Wait for 10 seconds and then hide the element with id "myElement"
+    setTimeout(function(){
+        $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+});
+   
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="transactionModalLabel">Review Transaction</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+        <p><strong>Debit Account:</strong> <span id="modalDebitAccount"></span></p>
+        <p><strong>Credit Account:</strong> <span id="modalCreditAccount"></span></p>
+        <p><strong>Amount:</strong> <span id="modalAmount"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success" id="confirmTransaction">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const reviewButton = document.getElementById("reviewTransaction");
+    const confirmButton = document.getElementById("confirmTransaction");
+    const form = document.getElementById("transactionForm");
+
+    reviewButton.addEventListener("click", function () {
+      // Populate modal with form data
+      document.getElementById("modalDescription").textContent =
+        form.description.value;
+      document.getElementById("modalDebitAccount").textContent =
+        form.debit_account.options[form.debit_account.selectedIndex].text;
+      document.getElementById("modalCreditAccount").textContent =
+        form.credit_account.options[form.credit_account.selectedIndex].text;
+      document.getElementById("modalAmount").textContent = form.amount.value;
+
+      // Show the modal
+      const transactionModal = new bootstrap.Modal(
+        document.getElementById("transactionModal")
+      );
+      transactionModal.show();
+    });
+
+    confirmButton.addEventListener("click", function () {
+      form.submit();
+    });
+  });
+</script>
+{% endblock body %}

@@ -1,0 +1,97 @@
+{% extends 'css-js-links.html' %} 
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+{% block title %}
+Add Category {% endblock title %} 
+
+{% block context %}
+
+{% include 'navbar.html' %} 
+
+{% endblock context %}
+
+
+
+{% block body %}
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+           {% include 'stock_finished_product/product_menu.html' %}
+  <div class="row">
+ 
+    <div class="col-md-5 offset-md-2 ">
+      <h2 class="text-center alert alert-info">Add Product Category</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+
+        <input type="submit" class="btn btn-success" {% if update %} value="Update Category" {% else %} value="Add Category" {%endif %}>
+        <a href= "/finished_product/" class="btn btn-warning" >Products</a>
+      </form>
+  
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-12 mt-5  ">
+      <h2 class="text-center alert alert-info">Categories</h2>
+
+      {% if mydata %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="10%">
+          <col width="65%">    
+          {% if update %} {% else %}<col width="25%"> {% endif %}
+      </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+            <td class="text-center fs-5">Sr.No.</td>
+            <td class="text-center fs-5">Name</td>
+            {% if update %} {% else %}<td class="text-center fs-5" >Action</td> {% endif %}
+            
+          </tr>
+        </thead>
+        <tbody>
+
+          {% if update %}
+          <tr>
+            <td class="text-center fs-5" >{{mydata.id}}</td>
+            <td class="text-center fs-5">{{mydata.name}}</td>
+          </tr>
+          {% else %}
+          {% for data in mydata %}
+          <tr>
+            <td class="text-center fs-5" >{{forloop.counter}}</td>
+            <td class="text-center fs-5">{{data.name}}</td>
+            {% if perms.home.change_blog %}
+            <td  class="text-center fs-5">
+              <a class="btn btn-sm btn-warning fs-5" href={% url 'edit_finished_product_category' id=data.id %}>Edit</a>
+              {% endif %}
+              {% if perms.home.delete_tank %}
+              <a class=" btn btn-sm btn-danger fs-5" href={% url 'delete_finished_product_category' id=data.id %}>Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %} 
+          {% endif %}
+        </tbody>
+      </table>
+      {% else %}
+      <h4 class="text-center alert alert-warning">No Record Found</h4>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+</div>
+  <script>
+     $(document).ready(function () {
+        // Wait for 4 seconds and then hide the element with id "msg"
+        setTimeout(function () {
+          $("#msg").hide();
+        }, 4000); // 10000 milliseconds = 10 seconds
+      })
+  </script>
+{% endblock body %}

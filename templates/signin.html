@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container " style="margin-left: 27%;">
+<div style="border-radius: 2rem;" class="container border col-5 m-5 p-4">
+    <h1>Signin</h1>
+    <form action="" method="POST" class=" mt-4">
+        {% csrf_token %}
+        {{form|crispy }}
+        <input class="btn btn-success mt-3" type="submit" value="SignIn">
+    </form>
+
+    {% if messages %} {% for message in messages %}
+    <small id="msg" class="m-5" {% if message.tags %} class="{{message.tags}} mt-3" {% endif %}>
+        {{message}}
+    </small>
+    {% endfor %} {% endif %}
+</div>
+</div>
+
+<script>
+    $(document).ready(function(){
+  
+      // Wait for 10 seconds and then hide the element with id "myElement"
+      setTimeout(function(){
+          $("#msg").hide();
+      }, 4000); // 10000 milliseconds = 10 seconds
+  });
+     
+  </script>
+{% endblock content %}

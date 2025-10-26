@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #000;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .header-section, .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .header-section div, .signature-section div {
+            width: 30%;
+        }
+        .header-section label, .signature-section label {
+            font-weight: bold;
+        }
+        .checkboxes {
+            margin-top: 10px;
+        }
+    </style>
+
+
+    <div class="container">
+
+        <a class="btn btn-success" href="//">Create Gate Pass</a>
+        <a class="btn btn-info" href="/list-gatepasses/">List Gate Pass</a>
+        <a class="btn btn-primary" href="/create-gatepass/">Create Gate Pass</a>
+
+        </div>
+
+
+    
+    <div class="container">
+
+
+
+
+
+        <div class="checkboxes">
+            <label><input type="checkbox" name="returnable"> Returnable</label>
+            <label><input type="checkbox" name="nonreturnable"> Nonreturnable</label>
+        </div>
+
+        <div class="header-section">
+            <div>
+                <label>Date:</label>
+                <input type="date" name="date">
+            </div>
+            <div>
+                <label>Vehicle:</label>
+                <input type="text" name="vehicle">
+            </div>
+            <div>
+                <label>Time:</label>
+                <input type="time" name="time">
+            </div>
+        </div>
+
+        <div class="header-section">
+            <div>
+                <label>Dispatch For:</label>
+                <input type="text" name="dispatch_for">
+            </div>
+            <div>
+                <label>Per. Name:</label>
+                <input type="text" name="per_name">
+            </div>
+            <div>
+                <label>Ph. No:</label>
+                <input type="text" name="ph_no">
+            </div>
+        </div>
+
+        <div class="header-section">
+            <div>
+                <label>Name of Site:</label>
+                <input type="text" name="site_name">
+            </div>
+        </div>
+
+        <table class="table table-stripped table-bordered">
+
+            <colgroup>
+                <col width="5%">
+                <col width="30%">
+                <col width="5%">
+                <col width="10%">
+                <col width="10%">
+                <col width="30%">
+          
+            </colgroup>
+
+
+            <thead>
+                <tr>
+                    <th>Sr#</th>
+                    <th>Description</th>
+                    <th>Qty.</th>
+                    <th>Unit</th>
+                    <th>Weight</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Repeat this row block for more entries -->
+                <tr>
+                    <td>1</td>
+                    <td><input style="width: 200px;" type="text" name="description_1"></td>
+                    <td><input style="width: 75px;" type="text" name="qty_1"></td>
+                    <td><input style="width: 75px;" type="text" name="unit_1"></td>
+                    <td><input style="width: 75px;" type="text" name="weight_1"></td>
+                    <td><input style="width: 200px;" type="text" name="remarks_1"></td>
+                </tr>
+                <!-- Repeat until row 12 -->
+                <!-- You can create rows dynamically with JavaScript -->
+            </tbody>
+        </table>
+
+        <div class="signature-section">
+            <div>
+                <label>Prepared By</label><br>
+                <label>Name:</label> <input type="text" name="prepared_by_name"><br>
+                <p  class="mt-3">Sign: ___________________</p>
+            </div>
+            <div>
+                <label>Authorized By</label><br>
+                <label>Name:</label> <input type="text" name="authorized_by_name"><br>
+                <p class="mt-3">Sign: ___________________</p>
+            </div>
+            <div>
+                <label>Received By</label><br>
+                <label>Name:</label> <input type="text" name="received_by_name"><br>
+                <p class="mt-3">Sign: ___________________</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

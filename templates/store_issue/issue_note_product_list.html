@@ -1,0 +1,21 @@
+
+{% load custom_filters %}
+
+{% if salereceipt_products %}
+{% for product in salereceipt_products %}
+<tr>
+    <td class="text-center">{{ forloop.counter }}</td>
+    <td class="text-center">{{ product.product.productname }}</td>
+    <td class="text-center">{{ product.quantity }}</td>
+    <td class="text-center">
+        <a href="#" 
+           class="btn btn-danger delete-item" 
+           data-product-id="{{ product.id }}" 
+           data-gatepass-id="{% if gatepass.id %}{{gatepass.id}}{% else %}{{salereceipt_id}}{% endif %}">
+           X
+        </a>
+    </td>
+</tr>
+{% endfor %} 
+{% endif %}
+    

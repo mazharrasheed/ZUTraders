@@ -1,0 +1,151 @@
+
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+  List Store Issue
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'store/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="text-center alert alert-info">
+      
+        Store Issue Request List 
+      
+      </h2>
+
+      {% if perms.home.add_store_issue_request %}
+      <a class="btn btn-primary mb-2" href="{% url 'create_store_issue_request' %}">Create Store Issue Request</a>
+      {% endif %}
+
+      <div class="card py">
+        <div class="table-responsive py-2">
+          {% if issuerequests%}
+          <table class="table table-flush" id="datatable">
+            <thead class="thead-light">
+              <tr>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Sr#
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Ref#
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Date
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Project Name
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Products Qty
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Requested By
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for issuerequest in issuerequests %}
+              <tr id="issuerequest-{{ issuerequest.id }}">
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td class="text-center">{{ issuerequest.id }}</td>
+                <td class="text-center">{{ issuerequest.date_created }}</td>
+                <td class="text-center">
+                  {{ issuerequest.project|title }}
+                </td>
+                <td class="text-center">
+                  {{ issuerequest_items_pro|get_item:issuerequest.id }}
+                </td>
+                <td class="text-center">
+                  {{ issuerequest.created_by }}
+                </td>
+                <td class="text-center">
+
+                  {% if perms.home.view_store_issue_request %}
+                  <a class="btn btn-info" href="{% url 'print_store_issue_request' issuerequest.id %}">Details</a>
+                  {% endif %}
+
+                  {% if not issuerequest.issue  %}
+
+                  {% if perms.home.add_store_issue_note %}
+                  <a class="btn btn-info" href="{% url 'store_issuerequest_issuenote' issuerequest.id %}">Issue</a>
+                  {% endif %}
+                  {% if perms.home.change_store_issue_request %}
+                  <a class="btn btn-warning" href="{% url 'edit_store_issue_request' issuerequest.id %}">Edit</a>
+                  {% endif %}
+                  {% if perms.home.delete_store_issue_request %}
+                  <button class="btn btn-danger delete-issue-request" data-issue-request-id="{{ issuerequest.id }}">
+                    Delete
+                  </button>
+                  {% endif %}
+
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <h4 class="text-center alert alert-warning">No Record Found</h4>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Handle the delete button click
+    $(".delete-issue-request").on("click", function (event) {
+      event.preventDefault();
+      var issuerequestId = $(this).data("issue-request-id");
+      var url = "{% url 'delete_store_issue_request' 0 %}".replace("0", issuerequestId);
+      if (confirm("Are you sure you want to delete this store issue request?")) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            if (response.success) {
+              // Remove the gate pass row from the table
+              $("#issuerequest-" + issuerequestId).remove();
+              $("#display-msg").html(
+                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+              );
+              // alert(response.message);
+            } else {
+              alert("Failed to delete the gate pass.");
+            }
+          },
+          error: function () {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock body %}

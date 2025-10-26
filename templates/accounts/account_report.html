@@ -1,0 +1,116 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Create Account {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'accounts/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+
+            <div class="col-lg-12">
+
+              <h1 class="text-center alert alert-info ">Account Details</h1>
+
+
+              <table class="table  table-striped">
+                <thead>
+                  <tr>
+                    <td>Account Name</td>
+                    <td>Account Category</td>
+                    <td>Account Type</td>
+                    <td>Balance</td>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>{% if account.name %}
+                      {{account.name|capitalize_after_space}}
+                      {% elif account.customer %}
+                      {{account.customer|capitalize_after_space}}
+                      {% elif account.supplier %}
+                      {{account.supplier|capitalize_after_space}}
+                      {% elif account.cheque %}
+                      {{account.cheque|capitalize_after_space}}
+                      {% else %}
+                      -
+                      {% endif %} </td>
+                    <td> {% if account.name %}
+                      General
+                      {% elif account.customer %}
+                      Customer
+                      {% elif account.supplier %}
+                      Supplier
+                      {% elif account.cheque %}
+                      Cheque/Receipt
+                      {% endif %} </td>
+                    <td>{{ account.account_type }} </td>
+                    <td>{{ balance }} </td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+
+              <div class="col-12 mt-5">
+
+                <table class="table  table-striped table-bordered" id="datatable">
+                  <thead class="thead-light">
+                    <tr>
+                      <th class="text-center">Date</th>
+                      <th class="text-center">Description</th>
+                      <th class="text-center">Debit Amount</th>
+                      <th class="text-center">Credit Amount</th>
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                      <td class="text-center">{{ transaction.date }}</td>
+                      <td class="text-center">{{ transaction.description }}</td>
+                      <td class="text-center">
+                        {% if transaction.debit_account == account %}
+                        {{ transaction.amount }}
+                        {% else %}
+                        -
+                        {% endif %}
+                      </td>
+                      <td class="text-center">
+                        {% if transaction.credit_account == account %}
+                        {{ transaction.amount }}
+                        {% else %}
+                        -
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body %}

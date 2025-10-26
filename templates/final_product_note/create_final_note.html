@@ -1,0 +1,194 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} Create Final Product Note {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'sale/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+
+{% block body %}
+
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .table-container {
+        width: 90%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #000;
+        background-color: #f8f9fa;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .btn {
+        margin: 5px;
+    }
+
+    .header-section, .footer-section {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .footer-section button {
+        width: 50%;
+    }
+
+    .header-section div {
+        width: 45%;
+    }
+
+    .bg-dark {
+        background-color: #343a40 !important;
+    }
+
+    .text-light {
+        color: #fff !important;
+    }
+
+    </style>
+
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+              <div class="table-container">
+                <h3 class="text-center bg-dark text-light p-3">Create Product Note</h3>
+                <form id="note-form" method="POST">
+                  {% csrf_token %}
+                  {{ form_note|crispy }}
+
+                  <h5 class="mt-4">Add Products</h5>
+                  <table class=" ">
+                    <thead>
+                      <tr>
+                        <td class="text-center">{{ form_product.product|as_crispy_field }}</td>
+                        <td class="text-center">{{ form_product.quantity|as_crispy_field }}</td>
+                        <td class="text-center">
+                          <button id="add-product" class="btn btn-primary" type="button">Add Product</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th class="text-center ">Product</th>
+                        <th class="text-center ">Quantity</th>
+                        <th class="text-center ">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="product-list"></tbody>
+                  </table>
+
+                  <button id="finalize-note" class="btn btn-success mt-3">Finalize Note</button>
+                  <a href="/list-final-pro-note/" class="btn btn-warning mt-3">Cancel</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(function () {
+    let productList = [];
+
+    // Add product
+    $('#add-product').on('click', function () {
+      const productId = $('#id_product').val();
+      const productName = $('#id_product option:selected').text();
+      const quantity = $('#id_quantity').val();
+
+      if (!productId || quantity <= 0) {
+        alert('Select product and valid quantity');
+        return;
+      }
+      if (productList.some(item => item.productId === productId)) {
+        alert('This product already added.');
+        return;
+      }
+
+      productList.push({ productId, quantity });
+
+      const row = `<tr>
+        <td class="text-center">${productName}</td>
+        <td class="text-center">${quantity}</td>
+        <td class="text-center"><button type="button" class="btn btn-danger delete-product" data-product-id="${productId}">Delete</button></td>
+      </tr>`;
+      $('#product-list').append(row);
+    });
+
+    // Delete product
+    $('#product-list').on('click', '.delete-product', function () {
+      const productId = $(this).data('product-id');
+      productList = productList.filter(item => item.productId !== productId);
+      $(this).closest('tr').remove();
+    });
+
+    // Finalize note
+    $('#finalize-note').on('click', function (e) {
+      e.preventDefault();
+
+      if (productList.length === 0) {
+        alert('Please add at least one product.');
+        return;
+      }
+
+      const formData = new FormData($('#note-form')[0]);
+      productList.forEach(item => {
+        formData.append('products[]', `${item.productId}:${item.quantity}`);
+      });
+      formData.append('finalize', true);
+
+      $.ajax({
+        url: $('#note-form').attr('action'),
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        success: function (data) {
+          if (data.success) {
+            window.location.href = data.redirect_url;
+          } else {
+            alert('Failed: ' + data.errors);
+          }
+        },
+        error: function () {
+          alert('Error creating note.');
+        }
+      });
+    });
+  });
+</script>
+{% endblock body %}

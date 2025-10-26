@@ -1,0 +1,122 @@
+{% extends 'css-js-links.html' %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+{% block title %}
+Projects
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'accounts/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-md-3 ">
+                            <h2 class="text-center alert alert-info">Add Region</h2>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{form|crispy}}
+
+                                <button type="submit" class="btn btn-success text-light">
+                                    {% if update %}
+                                    <i class="ti-pencil-alt"></i> Update Region
+                                    {% else %}
+                                    <i class="ti-plus"></i> Add Region
+                                    {% endif %}
+                                </button>
+
+                        </div>
+                        <div class="col-9  ">
+                            <h2 class="text-center alert alert-info">Regions List</h2>
+                            <div class="table-responsive py-4">
+                                {% if mydata %}
+                                <table class="table table-flush " id="datatable">
+
+                                    <colgroup>
+                                        <col width="10%">
+                                        <col width="60%">
+
+                                        {% if update %} {% else %}
+                                        <col width="30%"> {% endif %}
+                                    </colgroup>
+
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th class="border-bottom fw-bolder text-center" scope="col">
+                                                Sr#
+                                            </th>
+                                            <th class="border-bottom fw-bolder text-center" scope="col">
+                                                Name
+                                            </th>
+                                            {% if perms.home.change_project or perms.home.delete_project %}
+                                            {% if update %} {% else %} <th class="border-bottom fw-bolder text-center"
+                                                scope="col"> Action</th>
+                                            {% endif %}
+                                            {% else %}
+                                            <th class="border-bottom fw-bolder text-center" scope="col"></th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% if update %}
+                                        <tr>
+                                            <td class="text-center fs-5">{{mydata.id}}</td>
+                                            <td class="text-center fs-5">{{mydata.name}}</td>
+
+                                        </tr>
+                                        {% else %}
+                                        {% for data in mydata %}
+                                        <tr id="gatepass-{{ gatepass.id }}">
+                                            <td class="text-center">{{ forloop.counter }}</td>
+
+                                            <td class="text-center">{{ data.name|title }}</td>
+                                            <td class="text-center">
+                                                {% if perms.home.change_project %}
+                                                <a class="btn btn-warning text-light"
+                                                    href="{% url 'editregion' id=data.id %}"><i
+                                                        class="ti-pencil-alt"></i>Edit</a>
+                                                {% endif %}
+
+                                                {% if perms.home.delete_project %}
+                                                <a class="btn btn-danger" href="{% url 'deleteregion' id=data.id %}"
+                                                    onclick="return confirm('Are you sure you want to delete this region?');">
+                                                    <i class="ti-trash"></i> Delete
+                                                </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <h4 class="text-center alert alert-warning">
+                                    No Record Found
+                                </h4>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <script>
+                    $(document).ready(function () {
+                        // Wait for 4 seconds and then hide the element with id "msg"
+                        setTimeout(function () {
+                            $("#msg").hide();
+                        }, 4000); // 10000 milliseconds = 10 seconds
+                    })
+                </script>
+                {% endblock body %}

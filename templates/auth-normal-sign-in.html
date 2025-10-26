@@ -1,0 +1,155 @@
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block body %}
+
+
+<style>
+    .bg-image {
+        background-image: url("{% static 'assets/images/auth-img.png' %}");
+        background-size: cover;
+      
+    }
+</style>
+
+
+<body class="fix-menu">
+	<!-- Pre-loader start -->
+	<div class="theme-loader">
+		<div class="ball-scale">
+			<div class='contain'>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+				<div class="ring">
+					<div class="frame"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Pre-loader end -->
+
+
+	<section class=" p-fixed d-flex bg-image vh-100 ">
+		<!-- Container-fluid starts -->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<!-- Authentication card start -->
+					<div class="login-card card-block auth-body mr-auto ml-auto mt-5 mb-5">
+						<div class="auth-box mt-5 mb-5">
+							<div class="row m-b-20">
+								<div class="col-md-12">
+									<h3 class="text-left txt-primary">Sign In</h3>
+								</div>
+							</div>
+							<hr />
+							<form action="/login/" method="POST" class=" mt-4">
+								{% csrf_token %}
+								{{form|crispy }}
+								<input class="btn btn-success mt-3" type="submit" value="SignIn">
+							</form>
+							{% if messages %} {% for message in messages %}
+							<small id="msg" class="m-5" {% if message.tags %} class="{{message.tags}} mt-3" {% endif %}>
+								{{message}}
+							</small>
+							{% endfor %} {% endif %}
+							<hr />
+							<div class="color-info p-3">
+								<h5>Dont have an account ?</h5>
+								<a href="/signup/"> Create Account</a>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-md-10">
+									<p class="text-inverse text-left m-b-0">Thank you and enjoy our website.</p>
+									<p class="text-inverse text-left"><b>Your Authentication Team</b></p>
+								</div>
+								<div class="col-md-2">
+								</div>
+							</div>
+
+						</div>
+
+						<!-- end of form -->
+					</div>
+					<!-- Authentication card end -->
+				</div>
+				<!-- end of col-sm-12 -->
+			</div>
+			<!-- end of row -->
+		</div>
+		<!-- end of container-fluid -->
+	</section>
+	<!-- Warning Section Starts -->
+	<!-- Older IE warning message -->
+	<!--[if lt IE 9]>
+<div class="ie-warning">
+    <h1>Warning!!</h1>
+    <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+    <div class="iew-container">
+        <ul class="iew-download">
+            <li>
+                <a href="http://www.google.com/chrome/">
+                    <img src="assets/images/browser/chrome.png" alt="Chrome">
+                    <div>Chrome</div>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.mozilla.org/en-US/firefox/new/">
+                    <img src="assets/images/browser/firefox.png" alt="Firefox">
+                    <div>Firefox</div>
+                </a>
+            </li>
+            <li>
+                <a href="http://www.opera.com">
+                    <img src="assets/images/browser/opera.png" alt="Opera">
+                    <div>Opera</div>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.apple.com/safari/">
+                    <img src="assets/images/browser/safari.png" alt="Safari">
+                    <div>Safari</div>
+                </a>
+            </li>
+            <li>
+                <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                    <img src="assets/images/browser/ie.png" alt="">
+                    <div>IE (9 & above)</div>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <p>Sorry for the inconvenience!</p>
+</div>
+<![endif]-->
+	<!-- Warning Section Ends -->
+	<!-- Required Jquery -->
+
+</body>
+{% endblock body %}

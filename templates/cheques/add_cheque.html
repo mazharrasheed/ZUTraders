@@ -1,0 +1,121 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Add Cheque {% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'accounts/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+
+<div class="row">
+
+    <div class="col-md-4 offset-md-4 ">
+      <h2 class="text-center alert alert-info">Add Cheque/Receipt</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form|crispy}}
+
+        <input type="submit" class="btn btn-success" {% if update %} value="Update Cheque/Receipt" {% else %} value="Add Cheque/Receipt" {%endif %}>
+        <a href= "/cheques/" class="btn btn-warning" >Cheques</a>
+      </form>
+
+    </div>
+    </div>
+    <div class="col-12 mt-5 ">
+      <h2 class="text-center alert alert-info">Cheque/Receipt List</h2>
+
+      {% if mydata %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="10%">
+          <col width="15%">    
+          <col width="15%">    
+          <col width="15%">    
+          <col width="15%">    
+          
+             
+          {% if update %} {% else %}<col width="25%"> {% endif %}
+      </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+            <td>Sr.No.</td>
+            <td>Ref.No.</td>
+            <td>Customer Name</td>
+            <td>Cheque Number</td>
+            <td>Cheque Amount</td>
+            <td>Cheque Date</td>
+            <td>Bank Name</td>
+            <td>Status</td>
+           
+            {% if update %} {% else %}<td>Action</td> {% endif %}
+            
+          </tr>
+        </thead>
+        <tbody>
+
+          {% if update %}
+          <tr>
+            <td class="text-center" >{{mydata.id}}</td>
+            <td class="text-center">{{mydata.customer}}</td>
+            <td class="text-center">{{mydata.cheque_number}}</td>
+            <td class="text-center">{{mydata.cheque_amount}}</td>
+            <td class="text-center">{{mydata.cheque_date}}</td>
+            <td class="text-center">{{mydata.bank_name}}</td>
+            <td class="text-center">{% if data.status %} Cleared {% else %} Pendding {% endif %}</td>
+
+          </tr>
+          {% else %}
+          {% for data in mydata %}
+          <tr>
+            <td class="text-center" >{{forloop.counter}}</td>
+            <td class="text-center" >{{data.id}}</td>
+            <td class="text-center">{{data.customer}}</td>
+            <td class="text-center">{{data.cheque_number}}</td>
+            <td class="text-center">{{data.cheque_amount}}</td>
+            <td class="text-center">{{data.cheque_date}}</td>
+            <td class="text-center">{{data.bank_name}}</td>
+            <td class="text-center">{% if data.status %} Cleared {% else %} Pendding {% endif %}</td>
+            <td  class="text-center">
+              <a class="btn btn-sm btn-warning" href={% url 'editcheque' id=data.id %}>Edit</a>
+              <a class=" btn btn-sm btn-danger" href={% url 'deletecheque' id=data.id %}>Delete</a> 
+            </td>
+          </tr>
+          {% endfor %} 
+          {% endif %}
+        </tbody>
+      </table>
+      {% else %}
+      <h4 class="text-center alert alert-warning">No Record Found</h4>
+      {% endif %}
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  $(document).ready(function(){
+
+    // Wait for 4 seconds and then hide the element with id "msg"
+    setTimeout(function(){
+        $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+});
+   
+</script>
+  
+{% endblock body %}

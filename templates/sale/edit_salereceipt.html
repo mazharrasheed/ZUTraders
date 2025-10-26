@@ -1,0 +1,243 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Edit Customer Slae Receipt
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'sale/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<style>
+	body {
+		font-family: Arial, sans-serif;
+	}
+
+	.table-container {
+		width: 80%;
+		margin: 0 auto;
+		padding: 20px;
+		border: 1px solid #000;
+		background-color: #f8f9fa;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	th,
+	td {
+		border: 1px solid #000;
+		padding: 8px;
+		text-align: center;
+	}
+
+	th {
+		background-color: #343a40;
+		color: #fff;
+	}
+
+	.btn {
+		margin: 5px;
+	}
+
+	.header-section,
+	.footer-section {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.footer-section button {
+		width: 100%;
+	}
+
+	.header-section div {
+		width: 45%;
+	}
+
+	.bg-dark {
+		background-color: #343a40 !important;
+	}
+
+	.text-light {
+		color: #fff !important;
+	}
+</style>
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="table-container">
+            <h3 class="text-center bg-dark text-light p-3">Edit Customer Sale Receipt</h3>
+            <form id="salereceipt-form" method="POST">
+              {% csrf_token %}
+              <div class="header-section row">
+                <div class="col-md-6">
+                  <h4>MASH Systems</h4>
+                  <h6>Gujranwala</h6>
+                  <h6>Cell: 0301-8742840</h6>
+                </div>
+                <div class="col-md-6" >
+                  <p><strong>Date:</strong> {{ salereceipt.date_created|date:"Y-m-d H:i" }}</p>
+                  <p>{{ form_salereceipt.customer_name|as_crispy_field }}</p>
+                  <h5 id="price_list"> </h5>
+                
+                </div>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <td>{{ form.product|as_crispy_field }}</td>
+                    <td id="in_stock">In Stock</td>
+                    <td>{{ form.quantity|as_crispy_field }}</td>
+                    <td id="price">Unit Price (Auto)</td>
+                    <td id="amount">Auto</td>
+                    <td><button id="add-product" class="btn btn-primary" type="button"><i class="ti-plus me-1"></i> </button></td>
+                  </tr>
+                  <tr>
+                    <th>Product</th>
+                    <th>In Stock</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="product-list">
+                  {% for sp in salereceipt.sales_receipt_products.all %}
+                  <tr>
+                    <td>{{ sp.product.productname }}</td>
+                    <td>-</td>
+                    <td>{{ sp.quantity }}</td>
+                    <td>{{ sp.unit_price }}</td>
+                    <td>{{ sp.amount }}</td>
+                    <td><button type="button" class="delete-product btn btn-danger" data-id="{{ sp.product.id }}">
+                      <i class="ti-trash me-1"></i></button></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <button id="finalize-receipt" class="btn btn-success text-light"><i class="ti-pencil-alt me-1"></i></button>
+              <a href="/list-sales?customer=True" class="btn btn-warning text-light"> <i class="ti-close me-1"></i> </a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+  let productList = [];
+
+  // preload existing products
+  {% for sp in salereceipt.sales_receipt_products.all %}
+    productList.push({ product: "{{ sp.product.id }}", quantity: "{{ sp.quantity }}" });
+  {% endfor %}
+
+  // stock check
+  $("#id_product").on("change", (e) => {
+    let customerId = $("#id_customer_name").val()
+      // Build query params
+  let params = {};
+  if (customerId) params.customer = customerId;
+ 
+    $.ajax({
+      url: `/get-stock-final-product/${e.target.value}`,
+      method: "GET",
+      data: params,   // send customer/region (or both)
+      success: function (data) {
+        $("#in_stock").text(data.success ? data.stock : "N/A");
+        $("#price").text(data.success ? data.price : "N/A");
+      }
+    });
+  });
+
+  // add product
+  $("#add-product").on("click", function () {
+    const product = $('#id_product').val();
+    const productText = $('#id_product option:selected').text();
+    const quantity = $('#id_quantity').val();
+    const in_stock = parseInt($("#in_stock").text() || 0);
+
+    if (!product) { alert("Please select a product."); return; }
+    if (!quantity || quantity <= 0) { alert("Enter a valid quantity."); return; }
+    if (quantity > in_stock) { alert("Quantity exceeds stock."); return; }
+
+    if (productList.some(p => p.product === product)) {
+      alert("This product already added.");
+      return;
+    }
+
+    productList.push({ product, quantity });
+    const row = `<tr>
+      <td>${productText}</td>
+      <td>-</td>
+      <td>${quantity}</td>
+      <td>Auto</td>
+      <td>Auto</td>
+      <td><button type="button" class="delete-product btn btn-danger" data-id="${product}">Delete</button></td>
+    </tr>`;
+    $("#product-list").append(row);
+  });
+
+  // delete product
+  $("#product-list").on("click", ".delete-product", function () {
+    const pid = $(this).data("id");
+    productList = productList.filter(p => p.product !== String(pid));
+    $(this).closest("tr").remove();
+  });
+
+  // finalize update
+  $("#finalize-receipt").on("click", function (e) {
+    e.preventDefault();
+
+    if (productList.length === 0) {
+      alert("Please add at least one product.");
+      return;
+    }
+    if (!$('#id_customer_name').val() && !$('#id_region').val()) {
+      alert("Please select either a Customer or a Region.");
+      return;
+    }
+
+    const form = $("#salereceipt-form")[0];
+    const formData = new FormData(form);
+    productList.forEach(p => {
+      formData.append("products[]", `${p.product}:${p.quantity}`);
+    });
+    formData.append("finalize", true);
+
+    $.ajax({
+      url: form.action,
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      success: function (data) {
+        if (data.success) {
+          window.location.href = data.redirect_url;
+        } else {
+          alert("Error: " + JSON.stringify(data.errors));
+        }
+      }
+    });
+  });
+});
+</script>
+{% endblock body %}

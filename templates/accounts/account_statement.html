@@ -1,0 +1,153 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Create Account {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'accounts/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+
+            <div class="container mt-5">
+              <h2>Account Statement</h2>
+              <form method="get" class="mb-4">
+                <div class="row">
+                  <div class="col-md-4">
+                    <!-- {{ form.account.label_tag }} -->
+                    {{ form.account|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    <!-- {{ form.from_date.label_tag }} -->
+                    {{ form.from_date|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    <!-- {{ form.to_date.label_tag }} -->
+                    {{ form.to_date|as_crispy_field }}
+                  </div>
+                  <div class="col-md-2 mt-3">
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Get Statment</button>
+                  </div>
+                </div>
+              </form>
+
+              {% if form.is_valid %}
+              <div class="mb-3">
+                <h4>Account: {{ form.cleaned_data.account }}</h4>
+                <p><strong>Opening Balance:</strong> {{ opening_balance }}</p>
+                <p><strong>Total Debit:</strong> {{ total_debit }}</p>
+                <p><strong>Total Credit:</strong> {{ total_credit }}</p>
+                <p><strong>Closing Balance:</strong> {{ closing_balance }}</p>
+              </div>
+
+              <h4>Transactions</h4>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th >Date</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Debit Account</th>
+                    <th class="text-center">Credit Account</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Running Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for transaction, balance in running_balances %}
+                  <tr>
+                    <td>{{ transaction.date }}</td>
+                    <td class="text-center">{{ transaction.description }}</td>
+                    <td class="text-center">{{ transaction.debit_account }}</td>
+                    <td class="text-center">{{ transaction.credit_account }}</td>
+                    <td class="text-center">{{ transaction.amount }}</td>
+                    <td class="text-center">{{ balance }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+
+              </table>
+              <button class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#printModal">Print
+                Statement</button>
+              {% else %}
+              <p>No transactions found for the selected criteria.</p>
+              {% endif %}
+            </div>
+
+            <!-- Print Modal -->
+            <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="printModalLabel">Print Account Statement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" id="printContent">
+                    <h4>Account: {{ form.cleaned_data.account }}</h4>
+                    <p><strong>Opening Balance:</strong> {{ opening_balance }}</p>
+                    <p><strong>Total Debit:</strong> {{ total_debit }}</p>
+                    <p><strong>Total Credit:</strong> {{ total_credit }}</p>
+                    <p><strong>Closing Balance:</strong> {{ closing_balance }}</p>
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Description</th>
+                          <th>Debit Account</th>
+                          <th>Credit Account</th>
+                          <th>Amount</th>
+                          <th>Running Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for transaction, balance in running_balances %}
+                        <tr>
+                          <td>{{ transaction.date }}</td>
+                          <td>{{ transaction.description }}</td>
+                          <td>{{ transaction.debit_account }}</td>
+                          <td>{{ transaction.credit_account }}</td>
+                          <td>{{ transaction.amount }}</td>
+                          <td>{{ balance }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="printStatement()">Print</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printStatement() {
+    const printContent = document.getElementById('printContent').innerHTML;
+    const originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+    window.location.reload(); // Reload to reset the content after print
+  }
+</script>
+
+{% endblock body %}

@@ -1,0 +1,62 @@
+<div class="col-lg-3">
+    <h2 class="text-center alert alert-info">Accounts Menu</h2>
+    <div class="list-group">
+        {% if perms.home.view_account %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/accounts/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/accounts/" class="list-group-item">Accounts</a>
+        </h4>
+        {% endif %} 
+        {% if perms.home.add_account %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/create_accounts/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/create_accounts/" class="list-group-item">Create Accounts</a>
+        </h4>
+        {% endif %} 
+        
+        {% if perms.home.add_transaction %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/transaction/' or request.path == '/list_transactions/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/list_transactions/" class="list-group-item">Transactions</a>
+        </h4>
+        {% endif %}
+
+        {% if perms.home.view_balance_sheet %}
+    
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/balance_sheet/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/balance_sheet/" class="list-group-item">Balance Sheet</a>
+        </h4>
+        {% endif %}
+
+        {% if perms.home.view_employee %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/employees/' or request.path == '/add_employee/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/employees/" class="list-group-item">Employees</a>
+        </h4>
+        {% endif %} 
+        
+
+        {% if perms.home.view_customer %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/customers/' or request.path == '/add_customer/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/customers/" class="list-group-item">Customers</a>
+        </h4>
+        {% endif %} 
+
+        {% if perms.home.view_suppliers %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/suppliers/' or request.path == '/add_supplier/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/suppliers/" class="list-group-item">Suppliers</a>
+        </h4>
+        {% endif %}
+        
+        
+        {% if perms.home.view_cheque %}
+        <h4
+            class="bg-primary bg-gradient alert-info rounded {% if request.path == '/cheques/' %} bg-secondary bg-gradient text-light rounded {%endif%} p-3">
+            <a class="text-light" href="/cheques/" class="list-group-item">Cheques and Receipts</a>
+        </h4>
+        {% endif %}
+    </div>
+</div>

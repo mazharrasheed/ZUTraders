@@ -1,0 +1,74 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Gatepas {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'store/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          {% include 'stock/product_menu.html' %}
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class=" ">
+                <h3 class="">Add Items</h3>
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="row">
+                    {% for field in form %}
+                    <div class="col-md-3 mb-5">
+                      {{ field.label_tag }}
+                      {{ field }}
+                      {% if field.errors %}
+                      <div class="text-danger">{{ field.errors }}</div>
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+                  </div>
+
+                  
+                     <button type="submit" class="btn btn-success text-light">
+                                    {% if update %}
+                                    <i class="ti-pencil-alt"></i> Item
+                                    {% else %}
+                                    <i class="ti-plus"></i> Item
+                                    {% endif %}
+                                </button>
+
+
+                  <a href="/product/" class="btn btn-warning text-light">Items</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+    // Wait for 4 seconds and then hide the element with id "msg"
+    setTimeout(function () {
+      $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+  });
+
+</script>
+
+{% endblock body %}

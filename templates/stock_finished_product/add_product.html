@@ -1,0 +1,55 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Gatepas {% endblock title %} 
+
+{% block context %}
+{% include 'navbar.html' %} 
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+    {% include 'stock_finished_product/product_menu.html' %}
+    <div class="col-12 ">
+      <h3 class="text-center alert alert-info">Add Product</h3>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+       <div class="row">
+                  {% for field in form %}
+                  <div class="col-md-3 mb-5">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                  </div>
+                  {% endfor %}
+                </div>
+        <input type="submit" class="btn btn-success" {% if update %} value="Update Product" {% else %}
+          value="Add Product" {%endif %}>
+        <a href="/finished_product/" class="btn btn-warning">Products</a>
+      </form>
+
+    </div>
+  </div>
+
+  
+<script>
+  $(document).ready(function () {
+
+    // Wait for 4 seconds and then hide the element with id "msg"
+    setTimeout(function () {
+      $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+  });
+
+</script>
+
+{% endblock body %}

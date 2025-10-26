@@ -1,0 +1,143 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Suppliers {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'accounts/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+
+            <div class="col-12">
+              <h2 class="">Suppliers List</h2>
+
+              {% if perms.home.add_suppliers %}
+              <a href="{% url 'addsupplier' %}" class=" fs-6 mt-2 btn btn-primary col-md-2"> <i class="ti-plus me-3"></i> Supplier</a>
+              {% endif %}
+
+
+              <div class="card py mt-4">
+                <div class="table-responsive py-2">
+                  {% if suppliers%}
+                  <table class="table table-flush" id="datatable">
+                    <thead class="thead-light">
+                      <tr>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                          Sr#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                          Company Name
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                          Owner Name
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+
+                          Description
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                          Contact
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+
+                          Adress
+                        </th>
+                        <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for supplier in suppliers %}
+                      <tr id="supplier-{{ supplier.id }}">
+                        <td class="text-center fs-6">{{ forloop.counter }}</td>
+                        <td class=" fs-6">{{ supplier.coname|capitalize_after_space }}</td>
+                        <td class="text-center fs-6">{{ supplier.name|capitalize_after_space }}</td>
+                        <td class="text-center fs-6">{{ supplier.description|title }}</td>
+                        <td class="text-center fs-6">{{ supplier.contact }}</td>
+                        <td class="text-center fs-6">{{ supplier.adress|title }}</td>
+                        <td class="text-center ">
+                          {% if perms.home.change_suppliers %}
+                          <a class="btn btn-warning fs-6 text-light" href="{% url 'editsupplier' supplier.id %}"><i class="ti-pencil-alt"></i>Edit</a>
+                          {% else %}
+                          <p>No Edit permission </p>
+                          {% endif%}
+                          {% if perms.home.change_suppliers %}
+                          <button class="btn btn-danger fs-6  delete-supplier" data-supplier-id="{{ supplier.id }}">
+                           <i class="ti-trash"></i> Delete
+                          </button>
+                          {% else %}
+                          <p>No delete permission </p>
+                          {% endif%}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <h4 class="text-center alert alert-warning">No Record Found</h4>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    // Handle the delete button click
+    $(".delete-supplier").on("click", function (event) {
+      event.preventDefault();
+
+      var supplierId = $(this).data("supplier-id");
+      var url = "{% url 'deletesupplier' 0 %}".replace("0", supplierId);
+
+      if (confirm("Are you sure you want to delete this supplier?")) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            if (response.success) {
+              // Remove the gate pass row from the table
+              $("#supplier-" + supplierId).remove();
+              $("#display-msg").html(
+                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+              );
+
+              // alert(response.message);
+            } else {
+              alert("Failed to delete the supplier.");
+            }
+          },
+          error: function () {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock body %}

@@ -1,0 +1,119 @@
+{% extends 'css-js-links.html' %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+{% block title %}
+Projects
+{% endblock title %}
+
+{% block context %}
+{% include 'store/navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+
+<div class="pcoded-content">
+  
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            
+            <div class="col-3 ">
+              <h2 class="text-center alert alert-info">Add Finished</h2>
+              <form method="post">
+                {% csrf_token %}
+                {{form|crispy}}
+
+                <input type="submit" class="btn btn-success" {% if update %} value="Update Product" {% else %}
+                  value="Add Product" {%endif %}>
+
+            </div>
+            <div class="col-9  ">
+              <h2 class="text-center alert alert-info">Finish Products List</h2>
+
+              <div class="table-responsive py-4">
+                {% if mydata %}
+                <table class="table table-flush" id="datatable">
+
+                  <colgroup>
+                    <col width="10%">
+                    <col width="30%">
+                    <col width="20%">
+                    <col width="10%">
+                    {% if update %} {% else %}
+                    <col width="30%"> {% endif %}
+                  </colgroup>
+
+                  <thead class="thead-light">
+                    <tr>
+                      <th class="border-bottom fw-bolder text-center" scope="col">
+                        Sr#
+                      </th>
+                      <th class="border-bottom fw-bolder text-center" scope="col">
+                        Name
+                      </th>
+                      <th class="border-bottom fw-bolder text-center" scope="col">
+                        Sizes
+                      </th>
+                      <th class="border-bottom fw-bolder text-center" scope="col">
+                        Weight
+                      </th>
+                      {% if update %} {% else %} <th class="border-bottom fw-bolder text-center" scope="col"> Action
+                      </th>
+
+                      {% endif %}
+
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    {% if update %}
+                    <tr>
+                      <td class="text-center fs-5">{{mydata.id}}</td>
+                      <td class="text-center fs-5">{{mydata.name}}</td>
+                      <td class="text-center fs-5">{{mydata.size}}</td>
+                      <td class="text-center fs-5">{{mydata.weight}}</td>
+                    </tr>
+                    {% else %}
+                    {% for data in mydata %}
+                    <tr id="gatepass-{{ gatepass.id }}">
+                      <td class="text-center">{{ forloop.counter }}</td>
+
+                      <td class="text-center">{{ data.name|title }}</td>
+                      <td class="text-center">{{ data.size }}</td>
+                      <td class="text-center">{{ data.weight }}</td>
+                      <td class="text-center">
+                        <a class="btn btn-success" href="{% url 'edit_finish-products' id=data.id %}">Edit</a>
+                        <a class="btn btn-danger" href={% url 'delete-finish-products' id=data.id %}>Delete</a>
+
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+                {% else %}
+                <h4 class="text-center alert alert-warning">
+                  No Record Found
+                </h4>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    // Wait for 4 seconds and then hide the element with id "msg"
+    setTimeout(function () {
+      $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+  })
+</script>
+{% endblock body %}

@@ -1,0 +1,139 @@
+
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+{% include 'store/navbar.html' %}
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'store/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+
+
+{% block body %}
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-center alert alert-info">
+        
+        Goods Receipt Note List 
+       
+      </h2>
+
+      {% if perms.home.add_store_purchase_note %}
+      <a class="btn btn-primary mb-2" href="{% url 'create_store_purchase' %}">Create Goods Receipt Note</a>
+      {% endif %}
+
+      <div class="card py">
+        <div class="table-responsive py-2">
+          {% if purchasereceipts%}
+          <table class="table table-flush" id="datatable">
+            <thead class="thead-light">
+              <tr>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Sr#
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Ref#
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Date
+                </th>
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Products Qty
+                </th>
+                {% if perms.home.change_store_purchase_note or perms.home.delete_store_purchase_note %}
+                <th class="border-bottom fw-bolder text-center" scope="col">
+                  Action
+                </th>
+                {% else %}
+                <th class="border-bottom fw-bolder text-center" scope="col">
+              
+                </th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for purchasereceipt in purchasereceipts %}
+              <tr id="salereceipt-{{ purchasereceipt.id }}">
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td class="text-center">{{ purchasereceipt.id }}</td>
+                <td class="text-center">{{ purchasereceipt.date_created }}</td>
+                <td class="text-center">
+                  {{ purchasereceipts_items_pro|get_item:purchasereceipt.id }}
+                </td>
+                <td class="text-center">
+                  {% if perms.home.view_store_purchase_note  %}
+                  <a class="btn btn-success" href="{% url 'print_store_purchase' purchasereceipt.id %}">Detail</a>
+                  {% endif %}
+                  {% if perms.home.change_store_purchase_note %}
+                  <a class="btn btn-warning" href="{% url 'edit_store_purchase' purchasereceipt.id %}">Edit</a>
+                  {% endif %}
+                  {% if perms.home.delete_store_purchase_note %}
+                  <button class="btn btn-danger delete-salereceipt" data-salereceipt-id="{{ purchasereceipt.id }}">
+                    Delete
+                  </button>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <h4 class="text-center alert alert-warning">No Record Found</h4>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Handle the delete button click
+    $(".delete-salereceipt").on("click", function (event) {
+      event.preventDefault();
+      var salereceiptId = $(this).data("salereceipt-id");
+      var url = "{% url 'delete_store_purchase_note' 0 %}".replace("0", salereceiptId);
+      if (confirm("Are you sure you want to delete this sale receipt?")) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            if (response.success) {
+              // Remove the gate pass row from the table
+              $("#salereceipt-" + salereceiptId).remove();
+              $("#display-msg").html(
+                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+              );
+              // alert(response.message);
+            } else {
+              alert("Failed to delete the store purchase note.");
+            }
+          },
+          error: function () {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock body %}

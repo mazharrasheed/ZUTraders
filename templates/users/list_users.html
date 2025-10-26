@@ -1,0 +1,88 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Users {% endblock title %}
+
+{% block context %}
+{% include 'navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-center alert alert-info">Users List</h2>
+                            {% if perms.auth.add_user %}
+              <a class="btn btn-primary mb-2 bg-gradient rounded" href="{% url 'createuser' %}"> Create User </a>
+              {% endif %}
+                            <div class="card py">           
+                              <div class="table-responsive py-2">
+                                {% if users %}
+                                <table class="table table-flush" id="datatable">
+                                  <thead class="thead-light">
+                                    <tr>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        Sr#
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        User Name
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        First Name
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        Last Name
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        E-Mail
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        Group
+                                      </th>
+                                      <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                        User Action Details
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for user in users %}
+                                    <tr id="user-{{ user.id }}">
+                                      <td class="text-center fs-6">{{ forloop.counter }}</td>
+                                      <td class="text-center fs-6">{{ user.username|capitalize_after_space }}</td>
+                                      <td class="text-center fs-6">{{ user.first_name|capitalize_after_space }}</td>
+                                      <td class="text-center fs-6">{{ user.last_name|capitalize_after_space }}</td>
+                                      <td class="text-center fs-6">{{ user.email }}</td>
+                                      <td class="text-center">{% for group in user.groups.all %}
+                                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}</td>
+                                    <td class="text-center">
+                                      
+                                      <a class="btn btn-info" href="{% url 'userdetail' id=user.id %}?Issue_Requests=True">Issue Requests</a>
+                                      <a class="btn btn-info" href="{% url 'userdetail' id=user.id %}?Issue_Notes=True">Issue Notes</a>
+                                      
+                                    </td>
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                                {% else %}
+                                <h4 class="text-center alert alert-warning">No Record Found</h4>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}

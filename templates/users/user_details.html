@@ -1,0 +1,122 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Users {% endblock title %}
+
+{% block context %}
+{% include 'navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="text-center alert alert-info">
+                               User 
+                                    {% if issued %}
+                                        Issued Requests
+                                    {% else %}
+                                        Requests                                    
+                                    {% endif %} Details
+                            
+                            </h2>
+                            <div class="card py">
+                                <div class="table-responsive py-2">
+                                {% if request_data %}
+                                    <table class="table table-flush" id="datatable">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    Sr#
+                                                </th>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    I.R.ID.
+                                                </th>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    Created at
+                                                </th>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    Project
+                                                </th>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    Products
+                                                </th>
+                                                <th class="border-bottom fw-bolder text-center fs-6" scope="col">
+                                                    Pro.Qty
+                                                </th>
+                                            
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                    {% for req in request_data %}
+                                            <tr id="user-{{ req.id }}">
+                                                <td class="text-center fs-6">{{ forloop.counter }}</td>
+                                                <td class="text-center fs-6">{{ req.id }}</td>
+                                                <td class="text-center fs-6">{{ req.date_created}}</td>
+                                                <td class="text-center fs-6">{{ req.project|capitalize_after_space }}</td>
+                                                <td>
+                                            {% if requested %}
+                                                <ul>
+                                                    {% for item in req.store_issue_request_products.all %}
+                                                    <li>
+                                                    {{item.product.productname}}
+                                                    </li> 
+                                                    {% endfor %}
+                                                </ul>
+                                                </td>
+                                                <td>
+                                                <ul>
+                                                    {% for item in req.store_issue_request_products.all %}
+                                                    <li>
+                                                    {{item.quantity}}
+                                                    </li> 
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+
+                                            {% if issued %}
+                                                        
+                                                <ul>
+                                                    {% for item in req.store_issue_products.all %}
+                                                    <li>
+                                                    {{item.product.productname}}
+                                                    </li> 
+                                                    {% endfor %}
+                                                </ul>
+
+                                                </td>
+                                                <td>
+                                                <ul>
+                                                    {% for item in req.store_issue_products.all %}
+                                                    <li>
+                                                    {{item.quantity}}
+                                                    </li> 
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                                </td>
+                                                
+                                            </tr>
+                                    {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <h4 class="text-center alert alert-warning">No Record Found</h4>
+                                {% endif %}
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

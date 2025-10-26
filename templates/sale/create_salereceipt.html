@@ -1,0 +1,298 @@
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Create Customer Receipt {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'sale/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+    }
+    
+    .table-container {
+        width: 90%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #000;
+        background-color: #f8f9fa;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+    
+    th {
+        background-color: #343a40;
+        color: #fff;
+    }
+    
+    .btn {
+        margin: 5px;
+    }
+    
+    .header-section, .footer-section {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .footer-section button {
+        width: 50%;
+    }
+    
+    .header-section div {
+        width: 45%;
+    }
+    
+    .bg-dark {
+        background-color: #343a40 !important;
+    }
+    
+    .text-light {
+        color: #fff !important;
+    }
+    
+</style>
+
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="table-container">
+            <h3 class="text-center bg-dark text-light p-3">Customer Sale Receipt</h3>
+            <form id="salereceipt-form" method="POST">
+              {% csrf_token %}
+              <div class="header-section">
+                <div>
+                  <h4>MASH Systems</h4>
+                  <h6>Gujranwala</h6>
+                  <h6>Cell: 0301-8742840</h6>
+                </div>
+                <div style="margin-right:50px; width:500px">
+                  <p><strong>Date:</strong> Auto</p>
+             
+                  <div style=" width:500px">{{ form_salereceipt.customer_name|as_crispy_field }} 
+                    <h5 id="price_list"> </h5>
+                  </div>
+        
+                </div>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <td>{{ form.product|as_crispy_field }}</td>
+                    <td id="in_stock">In Stock</td>
+                    <td>{{ form.quantity|as_crispy_field }}</td>
+                    <td id="price"> price</td>
+                    <td id="amount">Auto</td>
+                    <td><button id="add-product" class="btn btn-primary" type="button">Add Product</button></td>
+                  </tr>
+                  <tr>
+                    <th>Product</th>
+                    <th>In Stock</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="product-list"></tbody>
+              </table>
+
+              <button id="finalize-receipt" class="btn btn-success">Finalize Receipt</button>
+              <a href="/list-sales?customer=True" class="btn btn-warning">Cancel Receipt</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+  let productList = [];
+
+  let product = $('#id_product');
+  let quantity = $('#id_quantity');
+
+// Disable the field
+product.prop("disabled", true);
+quantity.prop("disabled", true);
+
+id_customer_name
+// get stock on product select
+$("#id_product").on("change", (e) => {
+  let productId = e.target.value;
+  let customerId = $("#id_customer_name").val();   // assuming dropdown with id="id_customer"
+  // assuming dropdown with id="id_region"
+
+  // Check if at least one is selected
+  if (!customerId ) {
+    alert("Please select either a Customer or a Region first.");
+    $("#id_product").val(""); // reset product select if nothing chosen
+    return;
+  }
+
+  // Build query params
+  let params = {};
+  if (customerId) params.customer = customerId;
+ 
+  $.ajax({
+    url: `/get-stock-final-product/${productId}`,
+    method: "GET",
+    data: params,   // send customer/region (or both)
+    success: function (data) {
+      if (data.success) {
+        $("#in_stock").text(`${data.stock}`);
+        $("#price").text(`${data.price}`);
+      } else {
+        $("#in_stock").text("N/A");
+      }
+    }
+  });
+});
+
+// get Price List
+$("#id_customer_name").on("change", (e) => {
+  let productId = e.target.value;
+  let customerId = $("#id_customer_name").val();   // assuming dropdown with id="id_customer"
+  // assuming dropdown with id="id_region"
+
+  // Check if at least one is selected
+  if (!customerId ) {
+    alert("Please select either a Customer or a Region first.");
+    $("#id_product").val(""); // reset product select if nothing chosen
+    return;
+  }
+
+  // Build query params
+  let params = {};
+  if (customerId) params.customer = customerId;
+ 
+  $.ajax({
+    url: `/get-stock-final-product/${productId}`,
+    method: "GET",
+    data: params,   // send customer/region (or both)
+    success: function (data) {
+      if (data.success) {
+       
+        $("#price_list").text(`Price List : ${data.price_list}`);
+      } else {
+        $("#price_list").text("N/A");
+      }
+    }
+  });
+});
+
+
+
+// Check region for customer
+$("#id_customer_name").on("change", (e) => {
+  const product = $('#id_product');
+  let quantity = $('#id_quantity');
+  let customerId = e.target.value;
+  console.log("custeomer selected")
+  product.prop("disabled", false);
+  quantity.prop("disabled", false);
+
+});
+
+
+  // add product
+  $("#add-product").on("click", function () {
+    const product = $('#id_product').val();
+    const productText = $('#id_product option:selected').text();
+    const quantity = $('#id_quantity').val();
+    const in_stock = parseInt($("#in_stock").text() || 0);
+
+    if (!product) { alert("Please select a product."); return; }
+    if (!quantity || quantity <= 0) { alert("Enter a valid quantity."); return; }
+    if (quantity > in_stock) { alert("Quantity exceeds stock."); return; }
+
+    if (productList.some(p => p.product === product)) {
+      alert("This product already added.");
+      return;
+    }
+
+    productList.push({ product, quantity });
+    const row = `<tr>
+      <td>${productText}</td>
+      <td>-</td>
+      <td>${quantity}</td>
+      <td>Auto</td>
+      <td>Auto</td>
+      <td><button type="button" class="delete-product btn btn-danger" data-id="${product}">Delete</button></td>
+    </tr>`;
+    $("#product-list").append(row);
+  });
+
+  // delete product
+  $("#product-list").on("click", ".delete-product", function () {
+    const pid = $(this).data("id");
+    productList = productList.filter(p => p.product !== pid);
+    $(this).closest("tr").remove();
+  });
+
+  // finalize receipt
+  $("#finalize-receipt").on("click", function (e) {
+    e.preventDefault();
+
+    if (productList.length === 0) {
+      alert("Please add at least one product.");
+      return;
+    }
+
+    // validate customer/region
+    if (!$('#id_customer_name').val() && !$('#id_region').val()) {
+      alert("Please select either a Customer or a Region.");
+      return;
+    }
+
+    const form = $("#salereceipt-form")[0];
+    const formData = new FormData(form);
+    productList.forEach(p => {
+      formData.append("products[]", `${p.product}:${p.quantity}`);
+    });
+    formData.append("finalize", true);
+
+    $.ajax({
+      url: form.action,
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      success: function (data) {
+        if (data.success) {
+          window.location.href = data.redirect_url;
+        } else {
+          alert("Error: " + JSON.stringify(data.errors));
+        }
+      }
+    });
+  });
+});
+</script>
+{% endblock body %}

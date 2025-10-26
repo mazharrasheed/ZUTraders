@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <title> MASH Systems| {% block title %} {% endblock title %}  </title>
+  
+  <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="CodedThemes">
+  <meta name="keywords"
+    content=" Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+  <meta name="author" content="CodedThemes">
+  <!-- Favicon icon -->
+  <link rel="icon" href="{% static 'assets/images/fevicon.bmp' %}" type="image/x-icon">
+  <!-- Google font-->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+  <!-- Required Fremwork -->
+  <link rel="stylesheet" type="text/css" href="{%  static 'assets/css/bootstrap/css/bootstrap.min.css' %}">
+
+  <!-- themify-icons line icon -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+  <!-- ico font -->
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+  <!-- Style.css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/DataTables/datatables.min.css' %}" />
+  <link type="text/css" href="{% static 'css/volt.css' %}" rel="stylesheet" />
+
+
+</head>
+<body>
+
+    {% block context %} {% endblock context %}
+    
+    {% block body %} {% endblock body %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- responsive tables -->
+    <script src="{% static 'vendor/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+    <script src="{% static 'assets/js/volt.js' %}"></script>
+    <script src="{% static 'vendor/simple-datatables/dist/umd/simple-datatables.js' %}"></script>
+
+  <!-- Required Jquery -->
+  <script type="text/javascript" src="{% static 'assets/js/jquery/jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/jquery-ui/jquery-ui.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/popper.js/popper.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/bootstrap/js/bootstrap.min.js' %}"></script>
+  <!-- jquery slimscroll js -->
+  <script type="text/javascript" src="{% static 'assets/js/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+  <!-- modernizr js -->
+  <script type="text/javascript" src="{% static 'assets/js/modernizr/modernizr.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/modernizr/css-scrollbars.js' %}"></script>
+  <!-- am chart -->
+  <script src="{% static 'assets/pages/widget/amchart/amcharts.min.js' %}"></script>
+  <script src="{% static 'assets/pages/widget/amchart/serial.min.js' %}"></script>
+  <!-- Todo js -->
+  <script type="text/javascript " src="{% static 'assets/pages/todo/todo.js' %} "></script>
+  <!-- Custom js -->
+  <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
+  <script type="text/javascript " src="{% static 'assets/js/SmoothScroll.js' %}"></script>
+  <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+  <script src="{% static 'assets/js/demo-12.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/js/common-pages.js' %}"></script>
+  <script>
+    var $window = $(window);
+    var nav = $('.fixed-button');
+    $window.scroll(function () {
+      if ($window.scrollTop() >= 200) {
+        nav.addClass('active');
+      }
+      else {
+        nav.removeClass('active');
+      }
+    });
+  </script>
+
+  <script>
+
+    function selfCallingFunction() {
+      $(document).ready(function () {
+        // Wait for 4 seconds and then hide the element with id "msg"
+        setTimeout(function () {
+          $("#msg").hide();
+        }, 8000); // 10000 milliseconds = 10 seconds
+      });
+      // Call the function again after 5 seconds (5000 milliseconds)
+      setTimeout(selfCallingFunction, 8000);
+    }
+
+    // Initial call to start the loop
+    selfCallingFunction();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+{% extends 'css-js-links.html' %} 
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Add Account {% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'accounts/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center  alert alert-info">{% if update %} Edit {{account_type|title}} {% else %} Add {% endif %}  {% if account_type %}
+        {{account_type|title}} {% else %} General
+      {% endif %}  Account </h2>
+      <form method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" class="btn btn-info" {% if update %} value="Update Account" {% else %} value="Create Account"
+          {% endif %}>
+        <a class="btn btn-warning" href="/create_accounts/">Accounts</a>
+      </form>
+    </div>
+
+    </div>
+
+    <div class="col-12 mt-5">
+      <h2 class="text-center  alert alert-info">{% if account_type == none %} General {% else%}{{account_type|title}} {% endif %} Accounts List</h2>
+      <div class="table-responsive py-2">
+        {% if mydata %}
+        <table class="table table-flush" id="datatable">
+          <thead class="thead-light">
+            <tr class=" ">
+
+              {% if update %}
+              <td class="text-center fs-5">Account Id</td>
+              {% else %}
+              <td class="text-center fs-5">Sr.No.</td>
+              {% endif %}
+              <td class="text-center fs-5">Name</td>
+              <td class="text-center fs-5">Account Type</td>
+              {% if update %}
+              {% else %}
+              <td class="text-center fs-5">Actions</td>
+              {% endif %}
+            </tr>
+          </thead>
+
+          <tbody>
+            {% if update %}
+            <tr>
+              <td class="text-center fs-5">{{mydata.id}}</td>
+              {% if mydata.name %}
+              <td class=" fs-5">{{mydata.name}}</td>
+              {% elif mydata.customer %}
+              <td class=" fs-5">{{mydata.customer}}</td>
+              {% elif  mydata.supplier %}
+              <td class=" fs-5">{{mydata.supplier}}</td>
+              {% elif mydata.cheque %}
+              <td class=" fs-5">{{mydata.cheque}}</td>
+              {% else %}
+              <td class=" fs-5">-</td>
+              {% endif %}
+              <td class=" fs-5">{{mydata.account_type}}</td>
+            </tr>
+            {% else %}
+
+            {% for data in mydata %}
+            <tr>
+              <td class="text-center fs-5">{{forloop.counter}}</td>
+
+              {% if data.name %}
+              <td class=" fs-5">{{data.name}}</td>
+              {% elif data.customer %}
+              <td class="fs-5">{{data.customer}}</td>
+              {% elif  data.supplier %}
+              <td class=" fs-5">{{data.supplier}}</td>
+              {% elif data.cheque %}
+              <td class=" fs-5">{{data.cheque}}</td>
+              {% else %}
+              <td class="fs-5">-</td>
+              {% endif %}
+
+              <td class="text-center fs-5">{{data.account_type}}</td>
+              <td class="text-center fs-5">
+                <a class=" btn btn-sm btn-info" href={% url 'accountreport' id=data.id %}>Details</a>
+                {% if perms.home.change_account %}
+                <a class="btn btn-sm btn-warning" href={% url 'editaccount' id=data.id %}>Edit</a>
+                {% endif %}
+                {% if perms.home.delete_account %}
+                <a class=" btn btn-sm btn-danger" href={% url 'deleteaccount' id=data.id %}>Delete</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+        {% else %}
+        <h4 class="text-center  alert alert-warning">No Record Found</h4>
+        {% endif %}
+
+      </div>
+    </div>
+    <a href="/accountreport/"></a>
+  </div>
+
+
+  <script>
+    $(document).ready(function () {
+      console.log("i m jqurey");
+
+      // Wait for 10 seconds and then hide the element with id "myElement"
+      setTimeout(function () {
+        $("#msg").hide();
+      }, 4000); // 10000 milliseconds = 10 seconds
+    });
+
+  </script>
+
+  {% endblock body %}

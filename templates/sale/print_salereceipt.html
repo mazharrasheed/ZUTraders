@@ -1,0 +1,246 @@
+{% extends 'css-js-links.html' %}
+{% load custom_filters %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}
+Print Sale Receipt
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'sale/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    p {
+        margin-top: 0;
+        margin-bottom: 0rem;
+    }
+    .table-container {
+        width: 50%;
+        margin: 0 auto;
+        border: 1px solid #000;
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .footer-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    /* Print-specific styles */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .printableArea, .printableArea * {
+            visibility: visible;
+        }
+        .printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 5px;
+        }
+    }
+</style>
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+      <div class="main-body">
+        <div class="page-wrapper">
+          <div class="page-body">
+<div class="table-container printableArea"  id="printableArea">
+    <div class="text-center">
+        <h3 class="text-center p-3" style="background-color:#ffe3c2">
+            {% if salereceipt.customer_name %}
+            Customer Sale Receipt
+            {% else %}
+            Cash Sale Receipt
+
+            {% endif %}
+        
+        </h3>
+    </div>
+
+    <div class="header-section">
+        <div>
+            <h4 class="">
+                MASH Systems
+            </h4>
+            <h6 class="d-flex">Gujranwala.</h6>
+            <h6 class="d-flex">Phone Number:0300-0000000</h6>
+        </div>
+        <div style="margin-left:130px;width:300px">
+            <p><strong>Receipt No. :</strong>Mash Systems-0{{salereceipt.id}}</p>
+            <p><strong>Date:</strong>{{ salereceipt.date_created|date:"d-m-Y" }}</p>
+            <p><strong>Customer Name : {% if salereceipt.customer_name %}
+            {{salereceipt.customer_name}} {% else %} {{salereceipt.customer}} {% endif %}</strong></p>
+            <p><strong>Phone. No :{{salereceipt.phone_number}}</strong></p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-1 text-center">Sr.#.</th>
+                <th class="col-6 text-center">Description</th>
+                <th class="tbcol-3 text-center">Qty.</th>
+                <th class="tbcol-3 text-center">Unit Price</th>
+                <th class="tbcol-3 text-center">Amount</th>
+            </tr>
+        </thead>
+
+        <tbody id="product-list">
+            {% if salereceipt_products %}
+            {% for product in salereceipt_products %}
+            <tr>
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td>{{ product.product.productname }}</td>
+                <td class="text-center">{{ product.quantity }}</td>
+                <td class="text-center">{{ product.unit_price }}</td>
+                <td class="text-center">{{ product.amount }}</td>
+            </tr>
+            {% endfor %} 
+            {% endif %}
+            <tr>
+                <td class="text-center" colspan="4">Total Amount</td>
+                <td class="text-center">{{total_amount.amount__sum}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-section">
+        <div>
+            <p>Prepared By</p>
+            <p>Name: {{request.user}}</p>
+            <p>Sign: ___________________</p>
+        </div>
+    
+    </div>
+</div>
+
+<div class="container mt-5 mb-5 text-center">
+     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#printModal">
+            Print
+        </button>
+    <a href="{% url 'list_sales' %}" class="btn btn-success m-3">Cancel</a>
+</div>
+
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="storePurchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="storePurchaseModalLabel">Sales Receipt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Content will be copied dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="printReceipt()">Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Bootstrap JS (for modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function printReceipt() {
+    const printContents = document.getElementById('modalContent').innerHTML;
+    const printWindow = window.open('', '_blank', 'width=900,height=700');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Print Receipt</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .table-container {
+                        width: 100%;
+                        border: 1px solid #000;
+                        padding: 20px;
+                        background-color: #fff;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                    }
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    .header-section {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                    }
+                    .footer-section {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 20px;
+                        margin-left: 20px;
+                    }
+                    .text-center { text-align: center; }
+                </style>
+            </head>
+            <body>
+                <div class="printableArea">${printContents}</div>
+            </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(function () {
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
+// When modal opens, copy the printable area into the modal
+document.getElementById('printModal').addEventListener('show.bs.modal', function () {
+    const printableArea = document.getElementById('printableArea').innerHTML;
+    document.getElementById('modalContent').innerHTML = printableArea;
+});
+
+
+</script>
+
+
+{% endblock body %}

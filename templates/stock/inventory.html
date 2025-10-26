@@ -1,0 +1,75 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Inventory {% endblock title %}
+
+{% block context %}
+{% include 'navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-12">
+              <h2 class="text-center alert alert-info">Inventory</h2>
+              <div class="card py">
+                <div class="table-responsive py-2">
+                  <table class="table table-flush" id="datatable">
+                    <thead class="thead-light">
+                      <tr>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Sr#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Item ID#
+                        </th>
+
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Product Name
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          In Stock
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Status
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Units
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for data in mydata %}
+                      <tr id="salereceipt-{{ data.id }}">
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td class="text-center">{{ data.product.id }}</td>
+                        <td class="text-center">{{ data.product }}</td>
+                        <td class="text-center">{{ data.current_stock }}</td>
+                        <td class="text-center">{% if data.product.product_status %} Active
+                          {% else %}
+                          In Active
+                          {% endif %}</td>
+                        <td class="text-center">{{ data.product.unit }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body %}

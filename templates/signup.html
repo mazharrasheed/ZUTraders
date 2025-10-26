@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+
+    <div style="border-radius: 2rem;" class="container border col-5 m-5 p-4">
+       
+        {% crispy form %}
+  
+    {% if messages %} {% for message in messages %}
+    <p id="pid" {% if message.tags %} class="{{message.tags}} mt-3" {% endif %}>
+      {{message}}
+    </p>
+    {% endfor %} {% endif %}
+
+    
+</div>
+</div>
+
+<script>
+  $(document).ready(function(){
+
+    // Wait for 10 seconds and then hide the element with id "myElement"
+    setTimeout(function(){
+        $("#pid").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+});
+   
+</script>
+
+  {% endblock content %}

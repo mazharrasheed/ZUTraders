@@ -1,0 +1,239 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Edit Gate Pass
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+  {% include 'navbar.html' %}
+{% else %}
+  {% include 'store/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<style>
+  .table-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background-color: #343a40;
+    color: #fff;
+  }
+</style>
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="table-container">
+            <h3 class="text-center bg-dark text-light p-3">
+              Edit Gate Pass
+            </h3>
+
+            <form id="gatepass-form" method="POST">
+              {% csrf_token %}
+              <div class="header-section">
+                <h4>MASH Systems</h4>
+                <h6>Gate Pass ID: {{ gate_pass.id }}</h6>
+                <h6>Date: {{ gate_pass.date_created }}</h6>
+              </div>
+                <div class="row">
+                    <div class="row">
+                      {{ form.returnable|as_crispy_field }}
+                    </div>
+                    <div class="  col-md-4">
+                      {{ form.vehicle|as_crispy_field }}
+                      {{ form.driver_phone_number|as_crispy_field }}
+                    </div>
+                    <div class="  col-md-4 ">
+                      {{ form.name_of_site|as_crispy_field }}
+                      {{ form.dispatch_for|as_crispy_field }}
+                    </div>
+                    <div class=" col-md-4 ">
+                      {{ form.person_name|as_crispy_field }}
+                      {{ form.phone_number|as_crispy_field }}
+                    </div>
+                </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <td>{{ product_form.product|as_crispy_field }}</td>
+                    <td id="in_stock"></td>
+                    <td>{{ product_form.quantity|as_crispy_field }}</td>
+                    <td>{{ product_form.remarks|as_crispy_field }}</td>
+                    <td class='mt-5'>
+                      <button id="add-product" class="btn btn-primary" type="button">Add Product</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Product</th>
+                    <th>In Stock</th>
+                    <th>Quantity</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="product-list">
+                  {% for product in products %}
+                  <tr>
+                    <td>{{ product.product }}</td>
+                    <td>--</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.remarks }}</td>
+                    <td>
+                      <button
+                        class="delete-product btn btn-danger"
+                        data-product-id="{{ product.product.id }}"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="mt-3">
+                <button id="update-gatepass" class="btn btn-success">Update Gate Pass</button>
+                <a href="/list-gatepasses/" class="btn btn-warning">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  let productList = [
+    {% for product in products %}
+      { product: '{{ product.product.id }}', quantity: '{{ product.quantity }}', remarks: '{{ product.remarks }}' },
+    {% endfor %}
+  ];
+  let deletedProducts = [];
+
+  $('#id_product').on('change', function () {
+    const productId = $(this).val();
+    $.ajax({
+      url: `/get-stock/${productId}`,
+      method: 'GET',
+      success: function (data) {
+        if (data.success) {
+          $('#in_stock').text(`In Stock: ${data.stock}`);
+        } else {
+          alert('Failed to get stock.');
+        }
+      },
+      error: function () {
+        alert('Error fetching stock.');
+      }
+    });
+  });
+
+  $('#add-product').on('click', function () {
+    const product = $('#id_product').val();
+    const quantity = $('#id_quantity').val();
+    const remarks = $('#id_remarks').val();
+
+    if (!product || quantity <= 0) {
+      alert('Select a product and valid quantity.');
+      return;
+    }
+
+    if (productList.some(item => item.product === product)) {
+      alert('Product already added.');
+      return;
+    }
+
+    productList.push({ product, quantity, remarks });
+
+    $('#product-list').append(`
+      <tr>
+        <td>${$('#id_product option:selected').text()}</td>
+        <td>--</td>
+        <td>${quantity}</td>
+        <td>${remarks}</td>
+        <td>
+          <button class="delete-product btn btn-danger" data-product-id="${product}">Delete</button>
+        </td>
+      </tr>
+    `);
+  });
+
+  $('#product-list').on('click', '.delete-product', function () {
+    const productId = $(this).data('product-id'); // get product ID from data attribute
+
+    // Add product ID to the deletedProducts array if not already there
+    if (!deletedProducts.includes(productId)) {
+        deletedProducts.push(productId);
+    }
+
+    // Remove product from productList array
+    productList = productList.filter(function (item) {
+        return item.product != productId; // remove this product
+    });
+
+    // Remove row from the DOM
+    $(this).closest('tr').remove();
+});
+
+  $('#update-gatepass').on('click', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData($('#gatepass-form')[0]);
+
+    productList.forEach(item => {
+      formData.append('products[]', `${item.product}:${item.quantity}:${item.remarks}`);
+    });
+
+    deletedProducts.forEach(id => {
+      formData.append('deleted_products[]', id);
+    });
+
+    $.ajax({
+      url: $('#gatepass-form').attr('action'),
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      success: function (data) {
+    if (data.success) {
+        window.location.href = data.redirect_url;
+    } else if (data.errors) {
+        let errorText = 'Please fix the following errors:\n';
+        for (const [field, messages] of Object.entries(data.errors)) {
+            errorText += `${field}: ${messages.join(', ')}\n`;
+        }
+        alert(errorText);
+    } else {
+        alert(data.message || 'Failed to update Gate Pass.');
+    }
+},
+      error: function () {
+        alert('An error occurred.');
+      }
+    });
+  });
+</script>
+{% endblock body %}

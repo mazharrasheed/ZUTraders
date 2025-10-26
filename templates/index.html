@@ -1,0 +1,178 @@
+{% extends 'css-js-links.html' %}
+{% load static %}
+
+{% block context %}
+{% include 'navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-users-alt-6 bg-c-pink card1-icon"></i>
+                                    <span class="text-c-green f-w-600">Users Count</span>
+                                    <h4>
+                                        {% if users %}
+                                        {{users}}
+                                        {% else %}
+                                        No record found
+                                        {% endif %}
+                                    </h4>
+                                    <div>
+                                        <a class="f-left btn btn-success text-light " href="/list_users/">
+                                            <i class="icofont icofont-users-alt-4"></i>
+                                            All Users
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-users-alt-6 bg-c-pink card1-icon"></i>
+                                    <span class="text-c-green f-w-600">Employee Count</span>
+                                    <h4>
+                                        {% if employees %}
+                                        {{employees}}
+                                        {% else %}
+                                        No record found
+                                        {% endif %}
+                                    </h4>
+                                    <div>
+                                        <a class="f-left btn btn-success text-light " href="/employees/">
+                                            <i class="icofont icofont-users-alt-4"></i>
+                                            All Employees
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-users-alt-6 bg-c-pink card1-icon"></i>
+                                    <span class="text-c-green f-w-600">Customer Count</span>
+                                    <h4>
+                                        {% if customers %}
+                                        {{customers}}
+                                        {% else %}
+                                        No record found
+                                        {% endif %}
+                                    </h4>
+                                    <div>
+                                        <a class="f-left btn btn-success text-light " href="/customers/">
+                                            <i class="icofont icofont-users-alt-4"></i>
+                                            All Customers
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-users-alt-6 bg-c-pink card1-icon"></i>
+                                    <span class="text-c-green f-w-600">Supplier Count</span>
+                                    <h4>
+                                        {% if suppliers %}
+                                        {{suppliers}}
+                                        {% else %}
+                                        No record found
+                                        {% endif %}
+                                    </h4>
+                                    <div>
+                                        <a class="f-left btn btn-success text-light " href="/suppliers/">
+                                            <i class="icofont icofont-users-alt-4"></i>
+                                            All Suppliers
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <!-- card1 start -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
+                                    <span class="text-c-blue f-w-600">All Accounts</span>
+                                    
+                                    <div>
+                                       
+                                    <h4>
+                                        {% if accounts %}
+                                        {{accounts}}
+                                        {% else %}
+                                        No record found
+                                        {% endif %}
+                                    </h4>
+                                    </div>
+                                    <a class="f-left btn btn-success text-light " href="/create_accounts/">
+                                        <i class="icofont icofont-users-alt-4"></i>
+                                        All Accounts
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card1 end -->
+                        <!-- card1 start -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-ui-home bg-c-pink card1-icon"></i>
+                                    <span class="text-c-pink f-w-600">Revenue</span>
+                                    <h4>$23,589</h4>
+                                    <div>
+                                        <span class="f-left m-t-10 text-muted">
+                                            <i class="text-c-pink f-16 icofont icofont-calendar m-r-10"></i>Last 24
+                                            hours
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card1 end -->
+                        <!-- card1 start -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-warning-alt bg-c-green card1-icon"></i>
+                                    <span class="text-c-green f-w-600">Fixed issue</span>
+                                    <h4>45</h4>
+                                    <div>
+                                        <span class="f-left m-t-10 text-muted">
+                                            <i class="text-c-green f-16 icofont icofont-tag m-r-10"></i>Tracked via
+                                            microsoft
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card1 end -->
+                        <!-- card1 start -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card widget-card-1">
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-social-twitter bg-c-yellow card1-icon"></i>
+                                    <span class="text-c-yellow f-w-600">Followers</span>
+                                    <h4>+562</h4>
+                                    <div>
+                                        <span class="f-left m-t-10 text-muted">
+                                            <i class="text-c-yellow f-16 icofont icofont-refresh m-r-10"></i>Just update
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     
+                        {% endblock body %}

@@ -1,0 +1,285 @@
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+Sales-List
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'sale/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-12">
+              <h2 id="total_amount" class="text-center alert alert-info">
+                {% if customer %}
+                Customer Sales List [ Total Amount Rs.={{total_sale}} ]
+                {% elif cash %}
+                Cash Sales List [ Total Amount Rs.={{total_sale}}]
+                {% else %}
+                All Sales List [ Total Amount Rs.={{total_sale}}]
+                {% endif %}
+              </h2>
+
+              {% if customer %}
+
+              {% if perms.home.add_sales_receipt %}
+              <a class="btn btn-primary mb-2" href="{% url 'create_salereceipt' %}"><i class="ti-plus me-1"></i>
+                Customer Sale Receipt</a>
+              {% endif %}
+
+              {% elif cash %}
+              {% if perms.home.add_sales_receipt %}
+              <a class="btn btn-primary mb-2" href="{% url 'create_cash_salereceipt' %}"><i class="ti-plus me-1"></i>
+                Cash Sale Receipt</a>
+
+              {% endif %}
+
+              {% endif %}
+              <div class="card py">
+                <div class="table-responsive py-2">
+                  {% if salereceipts%}
+                  <table class="table table-flush" id="datatable">
+                    <thead class="thead-light">
+                      <tr>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Sr#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Ref#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Date
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Cutomer Name
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Products Qty
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Bill Amount
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Transaction
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for salereceipt in salereceipts %}
+                      <tr id="salereceipt-{{ salereceipt.id }}">
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td class="text-center">{{ salereceipt.id }}</td>
+                        <td class="text-center">{{ salereceipt.date_created }}</td>
+                        <td class="text-center">
+                          {% if salereceipt.customer %}
+                          {{ salereceipt.customer|title }}
+                          {% else %}
+                          {{ salereceipt.customer_name|title }}
+                          {% endif %}
+                        </td>
+                        <td class="text-center">
+                          {{ salereceipt_items_pro|get_item:salereceipt.id }}
+                        </td>
+                        <td class="text-center">
+                          {{ total_amount|get_amount:salereceipt.id}}
+                        </td>
+                        <td class="text-center" >{% if customer %}
+                          {% if perms.home.add_transaction %}
+                          {% if salereceipt.make_transaction %}
+                          <button class="btn alert-success" href="#" disabled>
+                            Added
+                          </button>
+                          {% else %}
+
+                          <button class="btn btn-info transaction-btn" data-id="{{ salereceipt.id }}"
+                            href="{% url 'maketransaction' salereceipt.id %}">
+                            <i class="ti-plus me-1"></i> Add
+                          </button>
+                          {% endif %}
+                          {% endif %}
+                          {% endif %}
+                        </td>
+                        
+                        <td class="text-center">
+                          {% if perms.home.view_sales_receipt %}
+                          <a class="btn btn-success text-light" href="{% url 'print_salereceipt' salereceipt.id %}">
+                            <i class="ti-printer me-1"></i> </a>
+                          {% endif %}
+
+                          {% if perms.home.change_sales_receipt %}
+
+                          {% if salereceipt.make_transaction %}
+
+                          <button class="btn btn-warning text-light me-1" disabled="true" href="{% if cash %}
+                          {% url 'edit_cashsale_receipt' salereceipt.id %}
+                          {% else %}
+                        
+                          {% url 'edit_salereceipt' salereceipt.id %}" {% endif %}> <i class="ti-pencil me-1"></i>
+                          </button>
+
+                          {% else %}
+
+                          <a class="btn btn-warning text-light" href="{% if cash %}
+                          {% url 'edit_cashsale_receipt' salereceipt.id %}
+                          {% else %}
+                        
+                          {% url 'edit_salereceipt' salereceipt.id %}"> <i class="ti-pencil me-1"></i> </a>
+
+                          {% endif %}
+                          {% endif %}
+                          {% endif %}
+
+                          {% if perms.home.delete_sales_receipt %}
+                          {% if salereceipt.make_transaction %}
+                          <button class="btn btn-danger" disabled data-salereceipt-id="{{ salereceipt.id }}">
+                            <i class="ti-trash me-1"></i>
+                          </button>
+                          {% else %}
+                          <button class="btn btn-danger delete-salereceipt" data-salereceipt-id="{{ salereceipt.id }}">
+                            <i class="ti-trash me-1"></i>
+                          </button>
+                          {% endif %}
+                          {% endif %}
+                        </td>
+                        
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <h4 class="text-center alert alert-warning">No Record Found</h4>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+          $(document).ready(function () {
+            // Handle the delete button click
+            $(".delete-salereceipt").on("click", function (event) {
+              event.preventDefault();
+              var salereceiptId = $(this).data("salereceipt-id");
+              var url = "{% url 'delete_salereceipt' 0 %}".replace("0", salereceiptId);
+              if (confirm("Are you sure you want to delete this sale receipt?")) {
+                $.ajax({
+                  type: "POST",
+                  url: url,
+                  data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                  },
+                  success: function (response) {
+                    if (response.success) {
+                      // Remove the gate pass row from the table
+                      $("#salereceipt-" + salereceiptId).remove();
+                      $("#display-msg").html(
+                        `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+                      );
+                      // alert(response.message);
+                    } else {
+                      alert("Failed to delete the sale receipt.");
+                      $("#display-msg").html(
+                        `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+                      );
+                    }
+                  },
+                  error: function () {
+                    alert("An error occurred. Please try again.");
+                  },
+                });
+
+                $.ajax({
+                  url: '/list-sales', // Update the URL to match your Django route
+                  method: 'GET',
+                  data: {
+                    //customer: 'True', // Adjust query parameters as needed
+                    cash: 'True'
+                  },
+                  headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                  },
+                  success: function (response) {
+                    if (response.total_sale !== undefined) {
+                      $("#total_amount").text(`Cash Sales List [ Total Amount Rs.=${response.total_sale}]`)
+
+                      console.log(response.total_sale)
+                      // alert('Total Sale: ' + response.total_sale);
+                    } else {
+                      alert('Failed to fetch total sale.');
+                    }
+                  },
+                  error: function (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while fetching total sale.');
+                  }
+                });
+              }
+            });
+          });
+        </script>
+
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+          $(document).on("click", ".transaction-btn", function (e) {
+            e.preventDefault();
+            let btn = $(this);
+            let url = btn.attr("href");
+
+            $.ajax({
+              url: url,
+              type: "POST",
+              data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+              },
+              success: function (response) {
+                alert(response.message);
+
+                // Disable the button and change text/icon dynamically
+                btn.removeClass('btn-info').addClass('alert-success').html('Transaction Added').prop('disabled', true);
+                
+                // Optionally: disable edit/delete buttons for this row
+                let row = btn.closest('tr');
+                row.find('.btn-warning, .btn-danger').prop('disabled', true);
+
+                let warningBtn = row.find('.btn-warning');
+
+                // If it's an <a>, replace it with a disabled <button>
+                if (warningBtn.is('a')) {
+                  warningBtn.replaceWith(
+                    '<button class="btn btn-warning text-light me-1" disabled><i class="ti-pencil me-1"></i></button>'
+                  );
+                } else {
+                  warningBtn.prop('disabled', true);
+                }
+
+                // Disable delete button normally (since it's always a <button>)
+                row.find('.btn-danger').prop('disabled', true);
+              },
+              error: function (xhr) {
+                alert("Error: " + xhr.responseJSON.message);
+              }
+            });
+          });
+        </script>
+
+        {% endblock body %}

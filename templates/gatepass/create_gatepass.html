@@ -1,0 +1,217 @@
+{% extends 'css-js-links.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Create Gate Pass
+{% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'store/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+              <div style="width: 70%; ">
+                <h3 class="text-center bg-dark text-light p-3">Create Gate Pass</h3>
+                <form id="gate_pass-form" method="POST">
+                  {% csrf_token %}
+                  <div class="row ">
+                    <div class="row">
+                      {{ form_gate_pass.returnable|as_crispy_field }}
+                    </div>
+                    <div class="  col-md-4">
+                      {{ form_gate_pass.vehicle|as_crispy_field }}
+                      {{ form_gate_pass.driver_phone_number|as_crispy_field }}
+                    </div>
+                    <div class="  col-md-4 ">
+                      {{ form_gate_pass.name_of_site|as_crispy_field }}
+                      {{ form_gate_pass.dispatch_for|as_crispy_field }}
+                    </div>
+                    <div class=" col-md-4 ">
+                      {{ form_gate_pass.person_name|as_crispy_field }}
+                      {{ form_gate_pass.phone_number|as_crispy_field }}
+                    </div>
+                  </div>
+                  <h5 class="mt-4">Add Products</h5>
+
+                  <table class="table table-responsive table-bordered ">
+                    <thead class="">
+                      <tr>
+                        <td class="text-center">{{ form.product|as_crispy_field }}</td>
+                        <td style=" vertical-align: middle" class="text-center" id="in_stock" style="width: 150px;">Select Product for Stock</td>
+                        <td class="text-center">{{ form.quantity|as_crispy_field }}</td>
+                        <td class="text-center">{{ form.remarks|as_crispy_field }}</td>
+
+                        <td class="text-center align-middle ">
+                          <button id="add-product" class="btn btn-primary" type="button">Add Product</button>
+                        </td>
+
+                        
+                      </tr>
+
+                      <tr>
+                        <th class="text-center">Product</th>
+                        <th class="text-center">In Stock</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Remarks</th>
+                        <th class="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="product-list"></tbody>
+                  </table>
+                  <button id="finalize-gate_pass" class="btn btn-success mt-3">Finalize Gate Pass</button>
+                  <a href="/list-gatepasses/" class="btn btn-warning mt-3">Cancel</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    let productList = [];
+
+    // Get stock when selecting a product
+    $('#id_product').on('change', function () {
+      const productId = $(this).val();
+      if (productId) {
+        $.ajax({
+          url: `/get-stock/${productId}`,
+          method: 'GET',
+          success: function (data) {
+            if (data.success) {
+              $('#in_stock').text(`in Stock ${data.stock}`);
+            } else {
+              $('#in_stock').text('N/A');
+              alert('Failed to get stock.');
+            }
+          },
+          error: function () {
+            alert('Error fetching stock.');
+          }
+        });
+      } else {
+        $('#in_stock').text(''); // clear stock if no product
+      }
+    });
+
+    // Add product to list
+    $('#add-product').on('click', function () {
+      const productId = $('#id_product').val();
+      const productName = $('#id_product option:selected').text();
+      const quantity = $('#id_quantity').val();
+      const remarks = $('#id_remarks').val();
+      const inStock = parseInt($('#in_stock').text());
+
+      if (!productId || quantity <= 0) {
+        alert('Please select a product and enter a valid quantity.');
+        return;
+      }
+      if (productList.some(item => item.productId === productId)) {
+        alert('This product has already been added.');
+        return;
+      }
+      if (quantity > inStock) {
+        alert(`Requested quantity (${quantity}) exceeds available stock (${inStock}).`);
+        return;
+      }
+
+      productList.push({ productId, quantity, remarks });
+
+      const row = `<tr>
+            <td class="text-center">${productName}</td>
+            <td class="text-center">----</td>
+            <td class="text-center">${quantity}</td>
+            <td class="text-center">${remarks}</td>
+            <td class="text-center"><button type="button" class="btn btn-danger delete-product" data-product-id="${productId}">Delete</button></td>
+        </tr>`;
+      $('#product-list').append(row);
+    });
+
+    // Delete product from list
+    $('#product-list').on('click', '.delete-product', function () {
+      const productId = $(this).data('product-id');
+      productList = productList.filter(item => item.productId !== productId);
+      $(this).closest('tr').remove();
+    });
+
+    // Finalize gate pass
+    // Finalize gate pass
+    $('#finalize-gate_pass').on('click', function (e) {
+      e.preventDefault();
+
+      // Check if products are added
+      if (productList.length === 0) {
+        alert('Please add at least one product.');
+        return;
+      }
+
+      // Client-side validation: check required fields
+      let hasError = false;
+      $('#gate_pass-form').find('input, select, textarea').each(function () {
+        if ($(this).prop('required') && !$(this).val()) {
+          alert(`Please fill the required field: ${$(this).attr('name')}`);
+          hasError = true;
+          return false; // break out of loop
+        }
+      });
+      if (hasError) {
+        return;
+      }
+
+      // Prepare FormData
+      const formData = new FormData($('#gate_pass-form')[0]);
+      productList.forEach(item => {
+        formData.append('products[]', `${item.productId}:${item.quantity}:${item.remarks}`);
+      });
+      formData.append('finalize', true);
+
+      // Submit AJAX
+      $.ajax({
+        url: $('#gate_pass-form').attr('action'),
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        success: function (data) {
+          if (data.success) {
+            window.location.href = data.redirect_url;
+          } else if (data.errors) {
+            // Display backend form validation errors
+            let errorText = 'Please correct the following errors:\n\n';
+            $.each(data.errors, function (field, errors) {
+              errorText += `${field}: ${errors.join(', ')}\n`;
+            });
+            alert(errorText);
+          } else {
+            alert('Failed to finalize gate pass.');
+          }
+        },
+        error: function () {
+          alert('Error finalizing gate pass. Please check the form and try again.');
+        }
+      });
+    });
+
+  });
+</script>
+{% endblock body %}

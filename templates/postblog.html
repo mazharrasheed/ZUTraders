@@ -1,0 +1,51 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Users {% endblock title %}
+
+{% block context %}
+{% include 'navbar.html' %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row mt-5 justify-content-center">
+            <div class="col-8 alert alert-info">
+              <h2 class="text-center alert alert-success">Post Blog </h2>
+              <form action="" method="POST">
+                {% csrf_token %} {{form|crispy}}
+                <input type="submit" class="btn btn-success" value="Post Blog" />
+                <a class="btn btn-info m-3" href="/dashboard/">Back to Dashboard Page</a>
+              </form>
+              {% if messages %} {% for message in messages %}
+              <small id='msg' {% if message.tags %} class="{{message.tags}}" {% endif %}>
+                <h5 class="alert alert-success"> {{message}}</h5>
+              </small>
+              {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+    // Wait for 10 seconds and then hide the element with id "myElement"
+    setTimeout(function () {
+      $("#msg").hide();
+    }, 4000); // 10000 milliseconds = 10 seconds
+  });
+
+</script>
+
+{% endblock body %}

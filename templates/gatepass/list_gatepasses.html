@@ -1,0 +1,146 @@
+{% extends 'css-js-links.html' %} 
+{% load custom_filters %}
+
+{% block title %}
+Gatepas {% endblock title %} 
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %} 
+{% else %}
+{% include 'store/navbar.html' %} 
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-md-12">
+              <h2 class="text-center alert alert-info">Gate Pass List</h2>
+              {% if perms.home.add_gatepass %}
+              <a class="btn btn-primary mb-2 bg-gradient rounded" href="{% url 'create_gatepass' %}">Create Gate
+                Pass</a>
+              {% endif %}
+              <div class="card py p-4">
+                <div class="table-responsive py-4">
+                  {% if gatepasses%}
+                  <table class="table table-flush" id="datatable">
+                    <thead class="thead-light">
+                      <tr>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Sr#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Ref#
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Type
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Date
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Vehicle No.
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Project
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Site
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Products
+                        </th>
+                        <th class="border-bottom fw-bolder text-center" scope="col">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for gatepass in gatepasses %}
+                      <tr id="gatepass-{{ gatepass.id }}">
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td class="text-center">{{ gatepass.id }}</td>
+                        <td class="">
+                          {% if gatepass.returnable %}Returnable{% else %}Non-returnable{% endif %}
+                        
+                        </td>
+                        <td class="text-center">{{ gatepass.date_created }}</td>
+                        <td class="text-center">{{ gatepass.vehicle }}</td>
+                        <td class="text-center">{{ gatepass.dispatch_for }}</td>
+                        <td class="text-center">{{ gatepass.name_of_site }}</td>
+                        <td class="text-center">
+                          {{ gatepass_items_pro|get_item:gatepass.id }}
+                        </td>
+                        <td class="text-center">
+                          <a class="btn btn-success" href="{% url 'print_gatepass' gatepass.id %}">Print</a>
+                          <a class="btn btn-warning" href="{% url 'edit_gatepass' gatepass.id %}">Edit</a>
+                          <button class="btn btn-danger delete-gatepass" data-gatepass-id="{{ gatepass.id }}">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <h4 class="text-center alert alert-warning">
+                    No Record Found
+                  </h4>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    console.log("i m j query")
+    // Handle the delete button click
+    $(".delete-gatepass").on("click", function (event) {
+      event.preventDefault();
+
+      var gatepassId = $(this).data("gatepass-id");
+      var url = "{% url 'delete_gatepass' 0 %}".replace("0", gatepassId);
+
+      if (confirm("Are you sure you want to delete this gate pass?")) {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function (response) {
+            if (response.success) {
+              // Remove the gate pass row from the table
+              $("#gatepass-" + gatepassId).remove();
+              $("#display-msg").html(
+                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
+              );
+
+              // alert(response.message);
+            } else {
+              alert("Failed to delete the gate pass.");
+            }
+          },
+          error: function () {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+{% endblock body %}
+</div>

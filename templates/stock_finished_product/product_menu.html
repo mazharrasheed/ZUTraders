@@ -1,0 +1,81 @@
+
+
+<ul class="nav nav-pills  mb-3">
+
+  <li class="nav-item " style="line-height:2;">
+    <a class="nav-link p-2" aria-current="page" href="/finished_product/" class="list-group-item">All Products</a>
+  </li>
+
+  {% if not prod %}
+    {% if not category_selected %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" style="padding-bottom: 9px !important;"  data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Categories
+    <i class="bi bi-caret-down-fill ms-1"></i> </a>
+    <ul class="dropdown-menu">
+      {% for category in categories %}
+      <li >
+      <a class="dropdown-item p-2 ms-3" aria-current="page" href="?category={{category.id}}">{{category.name}}</a> </i>
+    </li>
+   
+      {% endfor %}
+    </ul>
+  </li>
+
+  {% endif %}
+  {% endif %}
+
+  <!-- Category page Links -->
+
+  {% if category_selected %}
+
+  {% for category in categories %}
+  {% if perms.home.add_product %}
+
+
+  <li class="nav-item " style="line-height:2;">
+    <a class="nav-link p-2" href="#" class="list-group-item">
+    </i> {{category}} </a>
+  </li>
+  <li class="nav-item " style="line-height:2;">
+    <a class="nav-link p-2" href="/add-finished-product?category={{category.id}}" class="list-group-item">
+      <i class="ti-plus"></i> Products</a>
+  </li>
+
+
+  <!-- <li class="nav-item">
+    <a class="nav-link p-1 " href="{% url 'addproductprice' category.id %}" class="list-group-item">
+      Add Item Price
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link p-1" href="{% url 'searchproductprice' category.id %}"
+      class="list-group-item">Search Items Price</a>
+  </li> -->
+  {% endif %}
+  {% endfor %}
+
+  <!-- main page Links -->
+  {% elif add_category or category_selected == False %}
+  {% if perms.home.add_category %}
+  <li class="nav-item" style="line-height:2;">
+    <a class="nav-link p-2" href="/finished-product-category/" class="list-group-item"><i class="ti-plus me-1"></i>
+      Category</a>
+  </li>
+  <li class="nav-item " style="line-height:2;">
+    <a class="nav-link p-2" href="/add-finished-productmain/" class="list-group-item">
+      <i class="ti-plus me-1"></i>Product</a>
+  </li>
+
+  {% endif %}
+  {% endif %}
+
+  {% if prod %}
+  {% for category in categories %}
+  <li class="nav-item" style="line-height:2;">
+    <a class="nav-link p-2" href="/finished_product?category={{category.id}}" class="list-group-item">{{category.name}}</a>
+  </li>
+  {% endfor %}
+  {% endif %}
+  </li>
+</ul>

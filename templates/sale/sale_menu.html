@@ -1,0 +1,15 @@
+
+
+
+
+<div class="col-lg-3">
+    <h3 class="text-center alert alert-info">Slaes Menu</h3>
+    <div class="list-group">
+      {% if perms.home.add_sale_receipt %}
+      <h4 class="bg-primary bg-gradient rounded p-3 "> <a class="text-light" href="/list-sales?customer=True">Customer Sale Receipt</a></h4>
+      <h4 class="bg-primary bg-gradient rounded p-3 "> <a class="text-light" href="/list-sales?cash=True">Cash Sale Receipt</a></h4>
+
+    {% endif %}
+ 
+    </div>
+  </div>

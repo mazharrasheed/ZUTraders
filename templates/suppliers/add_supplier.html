@@ -1,0 +1,50 @@
+{% extends 'css-js-links.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block title %}
+Add supplier {% endblock title %}
+
+{% block context %}
+{% if request.user.is_superuser %}
+{% include 'navbar.html' %}
+{% else %}
+{% include 'accounts/navbar.html' %}
+{% endif %}
+{% endblock context %}
+
+{% block body %}
+<div class="pcoded-content">
+  <div class="pcoded-inner-content">
+    <div class="main-body">
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="row">
+            <div class="col-md-4 offset-md-4">
+              <h2 class="text-center alert alert-info">Add Supplier</h2>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form|crispy}}
+                <button type="submit" class="btn btn-info" {% if update %} value="Update Supplier" {% else %}
+                  value="Add Supplier" {%endif %}> {% if update %} <i class="ti-pencil-alt"></i> Supplier {% else %}
+                  <i class="ti-plus"></i>Supplier" {%endif %} </button >
+                <a href="/suppliers/" class="btn btn-warning text-light"> <i class="ti-arrow-left"></i>Supplier</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+
+      // Wait for 4 seconds and then hide the element with id "msg"
+      setTimeout(function () {
+        $("#msg").hide();
+      }, 4000); // 10000 milliseconds = 10 seconds
+    });
+
+  </script>
+
+  {% endblock body %}
