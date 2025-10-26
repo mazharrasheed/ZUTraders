@@ -57,7 +57,7 @@ Products {% endblock title %}
                     <tr id="salereceipt-{{ data.id }}">
                       <td class="text-center">{{ forloop.counter }}</td>
                       <td class="text-center">{{ data.id }}</td>
-                      <td class="text-center">{{ data.productname }}</td>
+                      <td class="text-center">{{ data.productname|capitalize_after_space}}</td>
                       <td class="text-center">{{ data.get_current_stock }}</td>
                       <td class="text-center">
                         {% if data.product_status %}
