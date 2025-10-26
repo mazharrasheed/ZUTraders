@@ -161,7 +161,7 @@ def sign_in(request):
         user = authenticate(username=uname, password=upass)
         if user is not None:
           login(request, user)
-          messages.success(request, "You are successfuly Signin")
+          messages.success(request, "You are Successfuly Signin")
 
           # if user.is_superuser:
           #   return HttpResponseRedirect("/")
@@ -200,13 +200,13 @@ def editprofile(request,id):
     if request.user.is_superuser==True:
       form=AdminUserPrifoleForm(request.POST,instance=request.user)
       form.is_valid()
-      messages.success(request,"Your profile Update successfuly")
+      messages.success(request,"Your profile Update successfully")
       form.save()
       return redirect('dashboard')
     else:
       form=EditUserPrifoleForm(request.POST,instance=request.user)
       form.is_valid()
-      messages.success(request,"Your profile Update successfuly")
+      messages.success(request,"Your Profile Update Successfully")
       form.save()
       return redirect('dashboard')
   else: 

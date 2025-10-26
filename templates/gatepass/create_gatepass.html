@@ -25,7 +25,7 @@ Create Gate Pass
           <div class="row">
             <div class="col-md-12 d-flex justify-content-center">
               <div style="width: 70%; ">
-                <h3 class="text-center bg-dark text-light p-3">Create Gate Pass</h3>
+                <h3 class="text-center bg-dark text-light p-3">Gate Pass</h3>
                 <form id="gate_pass-form" method="POST">
                   {% csrf_token %}
                   <div class="row ">
@@ -50,7 +50,7 @@ Create Gate Pass
                   <table class="table table-responsive table-bordered ">
                     <thead class="">
                       <tr>
-                        <td class="text-center">{{ form.product|as_crispy_field }}</td>
+                        <td class="text-center"  style="width: 230px;" >{{ form.product|as_crispy_field }} </td>
                         <td style=" vertical-align: middle" class="text-center" id="in_stock" style="width: 150px;">Select Product for Stock</td>
                         <td class="text-center">{{ form.quantity|as_crispy_field }}</td>
                         <td class="text-center">{{ form.remarks|as_crispy_field }}</td>
@@ -58,8 +58,6 @@ Create Gate Pass
                         <td class="text-center align-middle ">
                           <button id="add-product" class="btn btn-primary" type="button">Add Product</button>
                         </td>
-
-                        
                       </tr>
 
                       <tr>
@@ -68,6 +66,7 @@ Create Gate Pass
                         <th class="text-center">Quantity</th>
                         <th class="text-center">Remarks</th>
                         <th class="text-center">Actions</th>
+                    
                       </tr>
                     </thead>
                     <tbody id="product-list"></tbody>
