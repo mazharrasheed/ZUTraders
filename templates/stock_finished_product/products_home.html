@@ -46,9 +46,7 @@ Products {% endblock title %}
                       <th class="border-bottom fw-bolder text-center" scope="col">
                         Status
                       </th>
-                      <th class="border-bottom fw-bolder text-center" scope="col">
-                        Units
-                      </th>
+              
                       <th class="border-bottom fw-bolder text-center" scope="col">
                         Actions
                       </th>
@@ -67,7 +65,7 @@ Products {% endblock title %}
                         {% else %}
                         In Active 
                         {% endif %}</td>
-                      <td class="text-center">{{ data.unit }}</td>
+                      
                       <td>
                         {% if perms.home.change_final_product %}
                         <a class="btn btn-sm btn-warning fs-5 text-light" href={% url 'editfinishedproduct' id=data.id %}>
