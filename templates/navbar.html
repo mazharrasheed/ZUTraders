@@ -688,7 +688,7 @@
               <li
                 class="pcoded-hasmenu {% if request.path == '/accounts/' or  request.path == '/cheques/' or request.path == '/suppliers/' or request.path == '/customers/' or request.path == '/employees/' or request.path == '/create_accounts/' or request.path == '/balance_sheet/' or request.path == '/transaction/' or request.path == '/list_transactions/'  %} color-info {% endif %} ">
                 <a href="javascript:void(0)">
-                  <span class="pcoded-micon"><i class="ti-view-list-alt"></i></span>
+                  <span class="pcoded-micon mt-1"><i class="ti-view-list-alt"></i></span>
                   <span class="pcoded-mtext fs-5" data-i18n="nav.basic-components.main">
                     <h5>Accounts</h5>
                   </span>
@@ -699,7 +699,7 @@
                   {% if perms.home.view_account %}
                   <li class="{% if request.path == '/accounts/' %} active {% endif %} ">
                     <a href="/accounts/">
-                      <span class="pcoded-micon mt-1"><i class="ti-angle-right"></i></span>
+                      <span class="pcoded-micon "><i class="ti-angle-right"></i></span>
                       <span class="pcoded-mtext fs-5" data-i18n="nav.basic-components.alert">Accounts Dashboard</span>
                       <span class="pcoded-mcaret"></span>
                     </a>
