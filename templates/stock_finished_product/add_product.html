@@ -32,8 +32,8 @@ Gatepas {% endblock title %}
                   </div>
                   {% endfor %}
                 </div>
-        <a type="submit" class="btn btn-success text-light"> <i class="ti-plus"></i> {% if update %} Update Product {% else %}
-          Add Product{%endif %} </a> 
+        <input type="submit" class="btn btn-success text-light" {% if update %} value="Update Product" {% else %}
+          value="Add Product" {%endif %}>
         <a href="/finished_product/" class="btn btn-warning text-light">Products</a>
       </form>
 
