@@ -258,7 +258,7 @@ def create_cash_salereceipt(request):
                         unit_price=unit_price,
                         amount=amount
                     )
-                    Product.objects.get(id=product_id).change_status()
+                    Final_Product.objects.get(id=product_id).change_status()
                 return JsonResponse({'success': True, 'redirect_url': '/list-sales?cash=True'})
             else:
                 return JsonResponse({'success': False, 'errors': 'Invalid form data or no products selected.'})
@@ -306,8 +306,8 @@ def edit_cash_salereceipt(request,id):
                             'amount': float(amount),
                         }
                     )
-                    Product.objects.get(id=product_id).change_status()
-                except Product.DoesNotExist:
+                    Final_Product.objects.get(id=product_id).change_status()
+                except Final_Product.DoesNotExist:
                     return JsonResponse({'success': False, 'message': f'Product with ID {product_id} does not exist.'})
 
             return JsonResponse({'success': True, 'redirect_url': '/list-sales?cash=True'})
