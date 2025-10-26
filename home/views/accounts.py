@@ -190,10 +190,10 @@ def add_transaction(request):
         total_assets = int(sum(assets.values()))
         total_liabilities = int(sum(liabilities.values()))
         total_equity = int(sum(equity_account.values()))
-        if total_assets == total_liabilities+total_equity :
-            messages.success(request,"Balance Sheet is Balanced  !!")    
-        else:
-            messages.error(request," Balance Sheet is not Balanced Please check !!")
+        # if total_assets == total_liabilities+total_equity :
+        #     messages.success(request,"Balance Sheet is Balanced  !!")    
+        # else:
+        #     messages.error(request," Balance Sheet is not Balanced Please check !!")
     return render(request, 'accounts/add_transaction.html', {'form': form,'mydata': transactions})
 
 @login_required
@@ -240,7 +240,7 @@ def account_report(request,id):
         credit_transactions = account.credit_transactions.all()
         # transactions = account.debit_transactions.all().union(account.credit_transactions.all()).order_by('date')
         transactions = Transaction.objects.filter(Q(debit_account=account) | Q(credit_account=account)).order_by('date')
-        print(transactions)
+        # print(transactions)
 
         for transaction in debit_transactions:
             debit_balance += transaction.amount  
@@ -354,12 +354,12 @@ def balance_sheet(request):
     total_liabilities = int(sum(liabilities.values()))
     total_equity = int(sum(equity_account.values()))
 
-    if total_assets == total_liabilities+total_equity :
-        messages.success(request,"Balance Sheet is Balanced  !!")
-    else:
-        messages.error(request," Balance Sheet is not Balanced Please check !!")
+    # if total_assets == total_liabilities+total_equity :
+    #     messages.success(request,"Balance Sheet is Balanced  !!")
+    # else:
+    #     messages.error(request," Balance Sheet is not Balanced Please check !!")
 
-    total_equity = sum(liabilities.values())
+    # total_equity = sum(liabilities.values())
 
     net_profit=revenue-expenses
 
