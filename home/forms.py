@@ -939,9 +939,14 @@ class Cheque_AccountForm(forms.ModelForm):
 
 
 class TransactionForm(forms.ModelForm):
+
+    
     class Meta:
         model = Transaction
-        fields = ['description', 'debit_account','credit_account','amount']
+        fields = ['description', 'debit_account','credit_account','amount','date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
