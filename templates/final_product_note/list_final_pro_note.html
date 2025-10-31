@@ -28,7 +28,7 @@
     <div class="col-md-12">
       <h2 class="text-center alert alert-info">
         
-        Goods Receipt Note List 
+        Product Receipt Note List 
        
       </h2>
 
@@ -66,23 +66,23 @@
               </tr>
             </thead>
             <tbody>
-              {% for purchasereceipt in product_notes %}
-              <tr id="salereceipt-{{ purchasereceipt.id }}">
+              {% for product_note in product_notes %}
+              <tr id="salereceipt-{{ product_note.id }}">
                 <td class="text-center">{{ forloop.counter }}</td>
-                <td class="text-center">{{ purchasereceipt.id }}</td>
-                <td class="text-center">{{ purchasereceipt.date_created }}</td>
+                <td class="text-center">{{ product_note.id }}</td>
+                <td class="text-center">{{ product_note.date_created }}</td>
                 <td class="text-center">
-                  {{ purchasereceipts_items_pro }}
+                  {{ final_pro_note_pro|get_item:product_note.id }}
                 </td>
                 <td class="text-center">
                   {% if perms.home.view_store_purchase_note  %}
-                  <a class="btn btn-success" href="{% url 'print_store_purchase' purchasereceipt.id %}">Detail</a>
+                  <a class="btn btn-success" href="{% url 'print_final_pro_note' product_note.id %}">Detail</a>
                   {% endif %}
                   {% if perms.home.change_store_purchase_note %}
-                  <a class="btn btn-warning" href="{% url 'edit_store_purchase' purchasereceipt.id %}">Edit</a>
+                  <a class="btn btn-warning" href="{% url 'edit_final_pro_note' product_note.id %}">Edit</a>
                   {% endif %}
                   {% if perms.home.delete_store_purchase_note %}
-                  <button class="btn btn-danger delete-salereceipt" data-salereceipt-id="{{ purchasereceipt.id }}">
+                  <button class="btn btn-danger delete-note" data-note-id="{{ product_note.id }}">
                     Delete
                   </button>
                   {% endif %}
@@ -102,38 +102,32 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function () {
-    // Handle the delete button click
-    $(".delete-salereceipt").on("click", function (event) {
-      event.preventDefault();
-      var salereceiptId = $(this).data("salereceipt-id");
-      var url = "{% url 'delete_store_purchase_note' 0 %}".replace("0", salereceiptId);
-      if (confirm("Are you sure you want to delete this sale receipt?")) {
-        $.ajax({
-          type: "POST",
-          url: url,
-          data: {
-            csrfmiddlewaretoken: "{{ csrf_token }}",
-          },
-          success: function (response) {
-            if (response.success) {
-              // Remove the gate pass row from the table
-              $("#salereceipt-" + salereceiptId).remove();
-              $("#display-msg").html(
-                `<h5 id= 'msg' class='alert alert-success'> ${response.message} </h5> `
-              );
-              // alert(response.message);
-            } else {
-              alert("Failed to delete the store purchase note.");
-            }
-          },
-          error: function () {
-            alert("An error occurred. Please try again.");
-          },
-        });
+$(function() {
+  $('.delete-note').on('click', function() {
+    const noteId = $(this).data('note-id');
+    if (!confirm('Are you sure you want to delete this note?')) return;
+
+    $.ajax({
+      url: `/delete-final-pro-note/${noteId}`,
+      method: 'POST',
+      headers: { 
+        'X-CSRFToken': '{{ csrf_token }}',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      success: function(data) {
+        if (data.success) {
+          window.location.href = data.redirect_url;
+        } else {
+          alert('Failed: ' + data.message);
+        }
+      },
+      error: function() {
+        alert('Error deleting note.');
       }
     });
   });
+});
 </script>
+
 
 {% endblock body %}
