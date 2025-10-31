@@ -33,7 +33,7 @@
       </h2>
 
       {% if perms.home.add_store_purchase_note %}
-      <a class="btn btn-primary mb-2" href="{% url 'create_final_pro_note' %}">Create Final Product Note</a>
+      <a class="btn btn-primary mb-2" href="{% url 'create_final_pro_note' %}"><i class="ti-plus me-2"></i>Final Product Note</a>
       {% endif %}
 
       <div class="card py">
@@ -76,14 +76,14 @@
                 </td>
                 <td class="text-center">
                   {% if perms.home.view_store_purchase_note  %}
-                  <a class="btn btn-success" href="{% url 'print_final_pro_note' product_note.id %}">Detail</a>
+                  <a class="btn btn-success text-light" href="{% url 'print_final_pro_note' product_note.id %}"><i class="ti-printer me-1"></i></a>
                   {% endif %}
                   {% if perms.home.change_store_purchase_note %}
-                  <a class="btn btn-warning" href="{% url 'edit_final_pro_note' product_note.id %}">Edit</a>
+                  <a class="btn btn-warning text-light" href="{% url 'edit_final_pro_note' product_note.id %}"><i class="ti-pencil me-1"></i></a>
                   {% endif %}
                   {% if perms.home.delete_store_purchase_note %}
-                  <button class="btn btn-danger delete-note" data-note-id="{{ product_note.id }}">
-                    Delete
+                  <button class="btn btn-danger  delete-note" data-note-id="{{ product_note.id }}">
+                    <i class="ti-trash me-1"></i>
                   </button>
                   {% endif %}
                 </td>
