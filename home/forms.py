@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (UserChangeForm, UserCreationForm,
                                        UsernameField)
 from django.contrib.auth.models import User,Group
 from django.utils.translation import gettext_lazy as _
-
+from datetime import date
 from .models import Blog
 # forms.py
 from crispy_forms.helper import FormHelper
@@ -551,7 +551,9 @@ class Store_Purchase_ProductForm(forms.ModelForm):
             if Store_Purchase_Product.objects.filter(store_purchase_note=self.salereceipt, product=product).exists():
                 self.add_error('product', f'The product "{product}" has already been added to this Purchase note.')
         return cleaned_data
-
+    
+import datetime
+date_today=datetime.date.today()
 class Sales_ReceiptForm(forms.ModelForm):
     customer_name = forms.ModelChoiceField(
         queryset=Customer.objects.filter(is_deleted=False),
@@ -561,12 +563,16 @@ class Sales_ReceiptForm(forms.ModelForm):
 
     class Meta:
         model = Sales_Receipt
-        fields = ['customer_name',]
+        fields = ['customer_name','date_created']
+        widgets = {
+            'date_created': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(Sales_ReceiptForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['customer_name'].initial = self.instance.customer_name
+        self.fields['date_created'].initial=date_today
             
     def clean(self):
         cleaned_data = super().clean()
@@ -641,16 +647,21 @@ class Sales_Cash_ReceiptForm(forms.ModelForm):
     phone_number=forms.CharField(max_length=12 , required=True)
     class Meta:
         model = Sales_Receipt
-        fields = ['customer', 'phone_number']
+        fields = ['customer', 'date_created','phone_number']
+        widgets = {
+            'date_created': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
     def __init__(self, *args, **kwargs):
         super(Sales_Cash_ReceiptForm, self).__init__(*args, **kwargs)
+
         # Check if an instance is passed
         if self.instance and self.instance.pk:
             # Set the initial value of customer_name
             self.fields['customer'].initial = self.instance.customer
+        self.fields['date_created'].initial=date_today
 
 class Sales_Cash_Receipt_ProductForm(forms.ModelForm):
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Final_Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
     quantity = forms.IntegerField(min_value=1, initial=1, label='Quantity')
     unit_price = forms.FloatField( label='Unit Price',required=True)
 
@@ -667,7 +678,7 @@ class Sales_Cash_Receipt_ProductForm(forms.ModelForm):
         product = cleaned_data.get('product')
         if product and self.salereceipt:
             if Sales_Receipt_Product.objects.filter(salereceipt=self.salereceipt, product=product).exists():
-                self.add_error('product', f'The product "{product}" has already been added to this gate pass.')
+                self.add_error('product', f'The product "{product}" has already been added to this sales reciept.')
         return cleaned_data
 
 

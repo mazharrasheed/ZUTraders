@@ -145,57 +145,44 @@ Price List
                         });
                     </script>
 
-
                     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-
                                 <form method="POST" action='#' id="modal-form">
-
-                                    {% csrf_token %}
-                                   
+                                    {% csrf_token %}                                  
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="myModalLabel">Edit Product Price for
                                             {{price_list.name|capitalize_after_space}}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-
                                     <div class="modal-body">
                                         <!-- Input fields -->
                                         <div class="mb-3">
                                             <label id="product-label" for="pricelist" class="form-label">Product List</label>
                                             <input type="text " hidden name="pricelist" class="form-control" id="modal-pricelist" required>
                                         </div>
-
                                         <div class="mb-3">
                                             <label for="product" hidden class="form-label">Product</label>
-                                            <input type="text" hidden name="product" class="form-control" id="modal-product" required>
-                                        
+                                            <input type="text" hidden name="product" class="form-control" id="modal-product" required>                                       
                                         </div>
-
                                         <div class="mb-3">
                                             <label for="price" class="form-label">Price</label>
                                             <input type="text" name="price" class="form-control" id="modal-price">
                                         </div>
                                     </div>
-
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
                                             data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>
 
-
                     {% else %}
-
-
 
                     <div class="row">
                         <div class="col-md-3 ">

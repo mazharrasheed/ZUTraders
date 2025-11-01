@@ -15,17 +15,24 @@ from django.db import IntegrityError
 @login_required
 def get_final_product_stock(request,id):
     print('fdfsfdf')
+    product_price=None
+    price_list=None
+    customer=None
     customer_id = request.GET.get('customer')
     print('customer from getstock ',customer_id)
     product=Final_Product.objects.get(id=id)
     stock_qty=product.get_current_stock()
-    customer=Customer.objects.get(id=customer_id)
-    print(customer.price_list.name)
-    product_price=product.get_price_for_customer(customer=customer)
+    
+    if customer_id:
+        customer=Customer.objects.get(id=customer_id)
+        print(customer.price_list.name)
+        product_price=product.get_price_for_customer(customer=customer)
+        price_list=customer.price_list.name
+
     print('from get stock',product_price)
     print(stock_qty)
     print(id,stock_qty)
-    return JsonResponse({'success': True,'stock':stock_qty,'price':product_price,'price_list':customer.price_list.name})
+    return JsonResponse({'success': True,'stock':stock_qty,'price':product_price,'price_list':price_list})
 
 
 @login_required

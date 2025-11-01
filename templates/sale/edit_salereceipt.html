@@ -88,7 +88,7 @@ Edit Customer Slae Receipt
                   <h6>Cell: 0xxx-xxxxxxx</h6>
                 </div>
                 <div class="col-md-6" >
-                  <p><strong>Date:</strong> {{ salereceipt.date_created|date:"Y-m-d H:i" }}</p>
+                  <p> {{ form_salereceipt.date_created|as_crispy_field }} </p>
                   <p>{{ form_salereceipt.customer_name|as_crispy_field }}</p>
                   <h5 id="price_list"> </h5>
                 

@@ -84,8 +84,11 @@ class Final_Product(models.Model):
             Return the price of this product for the given customer based on their price list.
             If no price is found, return None.
             """
+            print("Fetching price for customer:", customer)
             if not customer or not customer.price_list:
+                print("No customer or price list found.")
                 return None
+            
             try:
                 return Price_List_Note_Products.objects.filter(
                     price_list=customer.price_list,
@@ -180,7 +183,8 @@ class Customer(models.Model):
 
 class Sales_Receipt(models.Model):
     products = models.ManyToManyField(Final_Product, through='Sales_Receipt_Product')
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField()
+    # date_created = models.DateTimeField(auto_now_add=True)
     customer_name =  models.ForeignKey(Customer,on_delete=models.RESTRICT,null=True,blank=True)
     customer =  models.CharField(max_length=220,null=True,blank=True)
     phone_number = models.CharField(max_length=12)
