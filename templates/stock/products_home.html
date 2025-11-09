@@ -71,11 +71,11 @@ Products {% endblock title %}
                         {% endif %}</td>
                       <td class="text-center">{{ data.unit }}</td>
                       <td>
-                        {% if perms.home.change_product %}
+                        {% if perms.home.change_item %}
                         <a class="btn btn-sm btn-warning fs-5 text-light" href={% url 'editproduct' id=data.id %}><i
                             class="ti-pencil-alt"></i>Edit</a>
                         {% endif %}
-                        {% if perms.home.delete_product %}
+                        {% if perms.home.delete_item %}
                         <a class=" btn btn-sm btn-danger fs-5" href={% url 'deleteproduct' id=data.id %} onclick="return confirm('Are you sure you want to delete this product?');"><i
                             class="ti-trash"></i>Delete</a>
                         {% endif %}
