@@ -3,7 +3,7 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import  Sales_Receipt_ProductForm,Sales_ReceiptForm,Sales_Cash_Receipt_ProductForm,Sales_Cash_ReceiptForm
-from ..models import Sales_Receipt, Sales_Receipt_Product,Product,Product_Price,Transaction,Account,Customer,Final_Product,Final_Product_Price
+from ..models import Sales_Receipt, Sales_Receipt_Product,Product_Price,Transaction,Account,Customer,Final_Product,Final_Product_Price
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string

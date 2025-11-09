@@ -3,7 +3,7 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import  Store_Purchase_ProductForm,Store_Purchase_Form
-from ..models import Store_Purchase_Note, Store_Purchase_Product ,Product
+from ..models import Store_Purchase_Note, Store_Purchase_Product ,Item
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -48,7 +48,7 @@ def create_store_purchase(request):
                         quantity=quantity
                     )
 
-                    Product.objects.get(id=product_id).change_status()
+                    Item.objects.get(id=product_id).change_status()
 
                 return JsonResponse({'success': True, 'redirect_url': '/list-store-purchase/'})
             else:
@@ -146,14 +146,14 @@ def edit_store_purchase(request, salereceipt_id):
 
             for product_id, total_quantity in product_quantities.items():
                 try:
-                    product_instance = Product.objects.get(id=product_id)
+                    product_instance = Item.objects.get(id=product_id)
                     product, created = Store_Purchase_Product.objects.update_or_create(
                         store_purchase_note=grn, 
                         product=product_instance, 
                         defaults={'quantity': total_quantity}
                     )
-                    Product.objects.get(id=product_id).change_status()
-                except Product.DoesNotExist:
+                    Item.objects.get(id=product_id).change_status()
+                except Item.DoesNotExist:
                     return JsonResponse({'success': False, 'message': f'Product with ID {product_id} does not exist.'})
 
             return JsonResponse({'success': True, 'redirect_url': '/list-store-purchase/'})
@@ -269,7 +269,10 @@ def delete_store_purchase(request, id):
         salereceipt = get_object_or_404(Store_Purchase_Note, id=id)
         salereceipt_products = Store_Purchase_Product.objects.filter(store_purchase_note=salereceipt)
         if salereceipt_products:
-            salereceipt_products.delete()  # Bulk delete all related products
+            for p in salereceipt_products:
+                p.delete()
+                p.change_status()
+            # salereceipt_products.delete()  # Bulk delete all related products
         salereceipt.delete()
         return JsonResponse({'success': True, 'message': 'Store purchase note deleted successfully!'})
     
@@ -277,7 +280,10 @@ def delete_store_purchase(request, id):
     salereceipt = get_object_or_404(Store_Purchase_Note, id=id)
     salereceipt_products = Store_Purchase_Product.objects.filter(store_purchase_note=salereceipt)
     if salereceipt_products:
-        salereceipt_products.delete()  # Bulk delete all related products
+        for p in salereceipt_products:
+                p.delete()
+                p.change_status()
+        # salereceipt_products.delete()  # Bulk delete all related products
     salereceipt.delete()
     messages.success(request, "Sale receipt deleted successfully!")
     return redirect('list_salereceipts')

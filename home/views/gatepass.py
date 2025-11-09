@@ -3,19 +3,15 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import  GatePassProductForm,GatePassForm
-from ..models import GatePass, GatePassProduct,Product
+from ..models import GatePass, GatePassProduct,Final_Product
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.contrib import messages
 from collections import defaultdict
 
-from ..forms import GatePassForm, GatePassProductForm
-from ..models import GatePass, GatePassProduct, Product
+
 
 
 @login_required
@@ -52,7 +48,7 @@ def create_gatepass(request):
                         quantity=quantity,
                         remarks=remarks
                     )
-                    Product.objects.get(id=product_id).change_status()
+                    Final_Product.objects.get(id=product_id).change_status()
                 return JsonResponse({'success': True, 'redirect_url': '/list-gatepasses/'})
             else:
                 return JsonResponse({'success': False, 'errors': 'Invalid form data or no products selected.'})
@@ -103,7 +99,7 @@ def edit_gatepass(request, gatepass_id):
                         product_id=product_id,
                         defaults={'quantity': quantity, 'remarks': remarks}
                     )
-                    Product.objects.get(id=product_id).change_status()
+                    Final_Product.objects.get(id=product_id).change_status()
                 except ValueError:
                     return JsonResponse({'success': False, 'message': 'Invalid product data.'})
 
@@ -138,7 +134,7 @@ def delete_gatepass(request, id):
 
 @login_required
 def get_stock(request, id):
-    product = get_object_or_404(Product, id=id)
+    product = get_object_or_404(Final_Product, id=id)
     stock_qty = product.get_current_stock()
     return JsonResponse({'success': True, 'stock': stock_qty})
 

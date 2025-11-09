@@ -13,7 +13,7 @@ from .models import Blog
 # forms.py
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from .models import Category,Product,Account,Transaction,GatePassProduct,GatePass,Unit,Sales_Receipt,Inventory
+from .models import Item_Category,Item,Account,Transaction,GatePassProduct,GatePass,Unit,Sales_Receipt,Inventory
 from .models import Customer,Sales_Receipt_Product,Suppliers,Cheque,Employee,Product_Price,Project,Final_Product
 from .models import Store_Issue_Note,Store_Issue_Product,Store_Purchase_Note,Store_Purchase_Product,Finish_Product_Category
 from .models import Store_Issue_Request,Store_Issue_Request_Product,Region,Final_Product_Price,Company,Final_Product_Note,Final_Product_Note_Product,Price_List,Price_List_Note,Price_List_Note_Products
@@ -70,7 +70,7 @@ class CopanyForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
 
     class Meta:
-        model = Category
+        model = Item_Category
         fields = ['name']
 
 class Finish_Product_CategoryForm(forms.ModelForm):
@@ -89,7 +89,7 @@ class Finish_Product_CategoryForm(forms.ModelForm):
 class CategoryForm(forms.ModelForm):
 
     class Meta:
-        model = Category
+        model = Item_Category
         fields = ['name']
 
 class Finish_ProductForm(forms.ModelForm):
@@ -129,11 +129,11 @@ class Finish_ProductForm(forms.ModelForm):
     
 
 
-class ProductForm(forms.ModelForm):
+class ItemForm(forms.ModelForm):
     # unit = forms.ModelChoiceField(queryset=Unit.objects.all(), empty_label="Select Unit")
-    category = forms.ModelChoiceField(queryset=Category.objects.filter(is_deleted=False), empty_label="Select Category")
+    category = forms.ModelChoiceField(queryset=Item_Category.objects.filter(is_deleted=False), empty_label="Select Category")
     class Meta:
-        model = Product
+        model = Item
         fields = [ 'productname','unit','category','final_product_group','default_store','stockable','rate','labour','weight','stock']
         labels={'productname':'Product Name',
                 'product_status':'Product_Status'}
@@ -149,7 +149,7 @@ class ProductForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
+        super(ItemForm, self).__init__(*args, **kwargs)
 
 
         placeholders = {
@@ -170,7 +170,7 @@ class ProductForm(forms.ModelForm):
         self.fields['default_store'].choices = [('', 'Select')] + list(self.fields['default_store'].choices)
 
 class Product_PriceForm(forms.ModelForm):
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Final_Product.objects.filter(is_deleted=False), empty_label="Select Product")
     customer = forms.ModelChoiceField(queryset=Customer.objects.filter(is_deleted=False), empty_label="Select Customer")
 
     class Meta:
@@ -183,7 +183,7 @@ class Product_PriceForm(forms.ModelForm):
 
         # Filter products based on the selected category
         if category:
-            self.fields['product'].queryset = Product.objects.filter(category=category, is_deleted=False)
+            self.fields['product'].queryset = Final_Product.objects.filter(category=category, is_deleted=False)
 
         placeholders = {
             'price': 'Enter product price here',
@@ -359,7 +359,7 @@ class PriceListNoteProductForm(forms.ModelForm):
 
 
 class search_Product_PriceForm(forms.Form):
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Final_Product.objects.filter(is_deleted=False), empty_label="Select Product")
     customer = forms.ModelChoiceField(queryset=Customer.objects.filter(is_deleted=False), empty_label="Select Customer")
 
     def __init__(self, *args, **kwargs):
@@ -368,7 +368,7 @@ class search_Product_PriceForm(forms.Form):
 
         # Filter products based on the selected category
         if category:
-            self.fields['product'].queryset = Product.objects.filter(category=category, is_deleted=False)
+            self.fields['product'].queryset = Final_Product.objects.filter(category=category, is_deleted=False)
 
 class GatePassForm(forms.ModelForm):
 
@@ -385,7 +385,7 @@ class GatePassForm(forms.ModelForm):
 
 class GatePassProductForm(forms.ModelForm):
 
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Final_Product.objects.filter(is_deleted=False), empty_label="Select Product")
     quantity = forms.IntegerField(min_value=1, initial=1, label='Quantity')
     remarks = forms.CharField( label='Remarks',required=False)
 
@@ -426,7 +426,7 @@ class Store_Issue_Request_Form(forms.ModelForm):
 class Store_Issue_Request_ProductForm(forms.ModelForm):
 
     # product = forms.ModelChoiceField(queryset=Product.objects.filter(inventory__quantity__gt=0).distinct(), empty_label="Select Product")
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Item.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
     quantity = forms.IntegerField(min_value=1, initial=1, label='Quantity')
     # unit_price = forms.FloatField( label='Unit Price',required=False)
 
@@ -467,7 +467,7 @@ class Store_issue_Form(forms.ModelForm):
 class Store_Issue_ProductForm(forms.ModelForm):
 
     # product = forms.ModelChoiceField(queryset=Product.objects.filter(inventory__quantity__gt=0).distinct(), empty_label="Select Product")
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Item.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
     quantity = forms.IntegerField(min_value=1, initial=1, label='Quantity')
     # unit_price = forms.FloatField( label='Unit Price',required=False)
 
@@ -527,7 +527,7 @@ class Store_Purchase_Form(forms.ModelForm):
 class Store_Purchase_ProductForm(forms.ModelForm):
 
     product = forms.ModelChoiceField(
-        queryset=Product.objects.filter(is_deleted=False),
+        queryset=Item.objects.filter(is_deleted=False),
         empty_label="Select Product",
         required=False
     )

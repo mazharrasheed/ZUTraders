@@ -3,7 +3,7 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import  Store_Issue_ProductForm,Store_issue_Form
-from ..models import Store_Issue_Note, Store_Issue_Product ,Product,Inventory,Final_Product
+from ..models import Store_Issue_Note, Store_Issue_Product ,Item,Inventory,Final_Product
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -56,7 +56,7 @@ def create_store_issue_note(request):
                         product_id=product_id,
                         quantity=quantity
                     )
-                    Product.objects.get(id=product_id).change_status()
+                    Item.objects.get(id=product_id).change_status()
 
                 return JsonResponse({'success': True, 'redirect_url': '/list-store-issue/'})
             else:
@@ -95,14 +95,14 @@ def edit_store_issue_note(request, issue_note_id):
 
             for product_id, total_quantity in product_quantities.items():
                 try:
-                    product_instance = Product.objects.get(id=product_id)
+                    product_instance = Item.objects.get(id=product_id)
                     product, created = Store_Issue_Product.objects.update_or_create(
                         store_issue_note=grn, 
                         product=product_instance, 
                         defaults={'quantity': total_quantity}
                     )
-                    Product.objects.get(id=product_id).change_status()
-                except Product.DoesNotExist:
+                    Item.objects.get(id=product_id).change_status()
+                except Item.DoesNotExist:
                     return JsonResponse({'success': False, 'message': f'Product with ID {product_id} does not exist.'})
 
             return JsonResponse({'success': True, 'redirect_url': '/list-store-issue/'})
@@ -132,7 +132,7 @@ def print_store_issue(request, issue_note_id):
 @login_required
 # @permission_required('home.add_store_issue_note' , login_url='/login/')
 def get_stock(request,id):
-    product=Product.objects.get(id=id)
+    product=Item.objects.get(id=id)
     stock_qty=product.get_current_stock()
     print(stock_qty)
     print(id,stock_qty)

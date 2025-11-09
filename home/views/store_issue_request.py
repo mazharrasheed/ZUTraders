@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import  Store_Issue_Request_ProductForm,Store_Issue_Request_Form
 from ..forms import  Store_Issue_ProductForm,Store_issue_Form
-from ..models import Store_Issue_Request, Store_Issue_Request_Product ,Product,Store_Issue_Product
+from ..models import Store_Issue_Request, Store_Issue_Request_Product ,Item,Store_Issue_Product
 from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -92,13 +92,13 @@ def edit_store_issue_request(request, issue_request_id):
 
             for product_id, total_quantity in product_quantities.items():
                 try:
-                    product_instance = Product.objects.get(id=product_id)
+                    product_instance = Item.objects.get(id=product_id)
                     product, created = Store_Issue_Request_Product.objects.update_or_create(
                         store_issue_request=grn, 
                         product=product_instance, 
                         defaults={'quantity': total_quantity}
                     )
-                except Product.DoesNotExist:
+                except Item.DoesNotExist:
                     return JsonResponse({'success': False, 'message': f'Product with ID {product_id} does not exist.'})
 
             return JsonResponse({'success': True, 'redirect_url': '/list-store-issue-request/'})
@@ -140,13 +140,13 @@ def store_issuerequest_issuenote(request, issue_request_id):
 
             for product_id, total_quantity in product_quantities.items():
                 try:
-                    product_instance = Product.objects.get(id=product_id)
+                    product_instance = Item.objects.get(id=product_id)
                     product = Store_Issue_Product.objects.create(
                         store_issue_note=store_issue_note, 
                         product=product_instance, 
                         quantity=quantity,
                     )
-                except Product.DoesNotExist:
+                except Item.DoesNotExist:
                     return JsonResponse({'success': False, 'message': f'Product with ID {product_id} does not exist.'})
             print(sir.issue)
             sir.issue=True
@@ -180,7 +180,7 @@ def print_store_issue(request, issue_request_id):
 @login_required
 @permission_required('home.add_store_issue_request', login_url='/login/')
 def get_stock(request,id):
-    product=Product.objects.get(id=id)
+    product=Item.objects.get(id=id)
     stock_qty=product.get_current_stock()
     print(stock_qty)
     print(id,stock_qty)

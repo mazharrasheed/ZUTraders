@@ -4,7 +4,6 @@ from home.views import category,product
 from home.views import users,views,accounts,store_issue,store_purchase,finished_product,finished_pro_category
 from home.views import gatepass,sales,suppliers,customers,cheques,employees,prices,company,store_issue_request
 from home.views import regions,final_product_note,price_list
-from home.models import Category
 from django.conf.urls.static import static
 
 from Inventry_management_System import settings

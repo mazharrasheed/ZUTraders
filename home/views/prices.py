@@ -1,6 +1,6 @@
 
 from django.shortcuts import render, redirect
-from home.models import Product_Price,Category,Finish_Product_Category,Final_Product_Price
+from home.models import Product_Price,Finish_Product_Category,Final_Product_Price
 from home.forms import Product_PriceForm,search_Product_PriceForm,Final_Product_PriceForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,permission_required
@@ -31,12 +31,12 @@ def list_product_prices(request):
 @permission_required('home.add_product_price', login_url='/login/')
 def add_product_price(request,id=''):
     if id:
-        cat=Category.objects.filter(is_deleted=False,id=id)
-        cat1=Category.objects.get(is_deleted=False,id=id)
+        cat=Finish_Product_Category.objects.filter(is_deleted=False,id=id)
+        cat1=Finish_Product_Category.objects.get(is_deleted=False,id=id)
     else:
         categoryID=int((request.GET.get('category')))
-        cat=Category.objects.filter(is_deleted=False,id=categoryID)
-        cat1=Category.objects.get(is_deleted=False,id=categoryID)
+        cat=Finish_Product_Category.objects.filter(is_deleted=False,id=categoryID)
+        cat1=Finish_Product_Category.objects.get(is_deleted=False,id=categoryID)
     if request.method == 'POST':
         mydata=Product_Price.objects.filter(is_deleted=False,product__category_id=cat1)
         form = Product_PriceForm(request.POST,category=cat1)
@@ -47,11 +47,11 @@ def add_product_price(request,id=''):
     else:
         
         if id:
-            cat=Category.objects.filter(is_deleted=False,id=id)
-            cat1=Category.objects.get(is_deleted=False,id=id)
+            cat=Finish_Product_Category.objects.filter(is_deleted=False,id=id)
+            cat1=Finish_Product_Category.objects.get(is_deleted=False,id=id)
         else:
-            cat=Category.objects.filter(is_deleted=False,id=categoryID)
-            cat1=Category.objects.get(is_deleted=False,id=categoryID)
+            cat=Finish_Product_Category.objects.filter(is_deleted=False,id=categoryID)
+            cat1=Finish_Product_Category.objects.get(is_deleted=False,id=categoryID)
 
         mydata=Product_Price.objects.filter(is_deleted=False,product__category_id=cat1).order_by("-id")
         form = Product_PriceForm(category=cat1)
@@ -92,12 +92,12 @@ def delete_product_price(request,id):
 @permission_required('home.view_product_price', login_url='/login/')
 def search_product_price(request,id=''):
     if id:
-        cat=Category.objects.filter(is_deleted=False,id=id)
-        cat1=Category.objects.get(is_deleted=False,id=id)
+        cat=Finish_Product_Category.objects.filter(is_deleted=False,id=id)
+        cat1=Finish_Product_Category.objects.get(is_deleted=False,id=id)
     else:
         categoryID=int((request.GET.get('category')))
-        cat=Category.objects.filter(is_deleted=False,id=categoryID)
-        cat1=Category.objects.get(is_deleted=False,id=categoryID)
+        cat=Finish_Product_Category.objects.filter(is_deleted=False,id=categoryID)
+        cat1=Finish_Product_Category.objects.get(is_deleted=False,id=categoryID)
     if request.method == 'POST':
         form = search_Product_PriceForm(request.POST,category=cat1)
         if form.is_valid():
@@ -110,11 +110,11 @@ def search_product_price(request,id=''):
     else:
         
         if id:
-            cat=Category.objects.filter(is_deleted=False,id=id)
-            cat1=Category.objects.get(is_deleted=False,id=id)
+            cat=Finish_Product_Category.objects.filter(is_deleted=False,id=id)
+            cat1=Finish_Product_Category.objects.get(is_deleted=False,id=id)
         else:
-            cat=Category.objects.filter(is_deleted=False,id=categoryID)
-            cat1=Category.objects.get(is_deleted=False,id=categoryID)
+            cat=Finish_Product_Category.objects.filter(is_deleted=False,id=categoryID)
+            cat1=Finish_Product_Category.objects.get(is_deleted=False,id=categoryID)
 
         mydata=Product_Price.objects.filter(is_deleted=False,product__category_id=cat1).order_by("-id")
         form = search_Product_PriceForm(category=cat1)

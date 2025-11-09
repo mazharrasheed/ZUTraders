@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Blog,Category,Product,GatePass,GatePassProduct,UnderConstruction
+from .models import Blog,Item_Category,Item,GatePass,GatePassProduct,UnderConstruction
 
 # Register your models here.
 
@@ -11,7 +11,7 @@ class BlogAdmin(admin.ModelAdmin):
     list_display = ['id','title','description']
    
 
-@admin.register(Product)
+@admin.register(Item)
 class ProductAdmin(admin.ModelAdmin):
     '''Admin View for Product'''
 

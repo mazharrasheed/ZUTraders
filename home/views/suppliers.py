@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect
 from home.models import Suppliers
-from home.forms import ProductForm,Suppliers_form
+from home.forms import Suppliers_form
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,permission_required
 from django.http import JsonResponse
