@@ -90,8 +90,8 @@
                   <h6>Gujranwala</h6>
                   <h6>Cell: 0xxx-xxxxxxx</h6>
                 </div>
-                <div style="margin-right:50px;width:500px">
-                  <p><strong>Date:</strong> Auto</p>
+                <div style="margin-right:50px;">
+                  <p>{{ form_salereceipt.date_created|as_crispy_field }}</p>
                   <p style="margin-top:10px"><span class="">{{ form_salereceipt.customer|as_crispy_field }}</span></p>
                   <p>{{form_salereceipt.phone_number|as_crispy_field }}</p>
                   
@@ -100,7 +100,7 @@
               <table>
                 <thead>
                   <tr>
-                    <td>{{ form.product|as_crispy_field }}</td>
+                    <td style="width:250px;">{{ form.product|as_crispy_field }}</td>
                     <td id="in_stock">In Stock</td>
                     <td>{{ form.quantity|as_crispy_field }}</td>
                     <td >{{ form.unit_price|as_crispy_field }}</td>
@@ -139,7 +139,7 @@
   $('#id_product').on('change',(e)=>{
     console.log(e.target.value)
     $.ajax({
-      url: `/get-stock/${e.target.value}`,
+      url: `/get-stock-final-product/${e.target.value}`,
       method: 'get',
       success: function (data) {
         if (data.success) {

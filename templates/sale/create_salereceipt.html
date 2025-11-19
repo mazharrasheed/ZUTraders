@@ -88,15 +88,12 @@
                   <h6>Cell: 0xxx-xxxxxxx</h6>
                 </div>
                 <div style="margin-right:50px; width:500px">
-                  <p><strong>Date:</strong> Auto</p>
-             
+                  <p> {{ form_salereceipt.date_created|as_crispy_field }}</p>
                   <div style=" width:500px">{{ form_salereceipt.customer_name|as_crispy_field }} 
                     <h5 id="price_list"> </h5>
                   </div>
-        
                 </div>
               </div>
-
               <table>
                 <thead>
                   <tr>
@@ -118,9 +115,10 @@
                 </thead>
                 <tbody id="product-list"></tbody>
               </table>
-
+<div class="d-flex"> 
               <button id="finalize-receipt" class="btn btn-success">Finalize Receipt</button>
               <a href="/list-sales?customer=True" class="btn btn-warning">Cancel Receipt</a>
+              </div>
             </form>
           </div>
         </div>

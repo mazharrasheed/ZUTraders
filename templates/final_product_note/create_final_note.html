@@ -16,61 +16,61 @@
 
 
 <style>
+  body {
+    font-family: Arial, sans-serif;
+  }
 
-    body {
-        font-family: Arial, sans-serif;
-    }
+  .table-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #000;
+    background-color: #f8f9fa;
+  }
 
-    .table-container {
-        width: 90%;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #000;
-        background-color: #f8f9fa;
-    }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+  th,
+  td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: center;
+  }
 
-    th, td {
-        border: 1px solid #000;
-        padding: 8px;
-        text-align: center;
-    }
+  th {
+    background-color: #343a40;
+    color: #fff;
+  }
 
-    th {
-        background-color: #343a40;
-        color: #fff;
-    }
+  .btn {
+    margin: 5px;
+  }
 
-    .btn {
-        margin: 5px;
-    }
+  .header-section,
+  .footer-section {
+    display: flex;
+    justify-content: space-between;
+  }
 
-    .header-section, .footer-section {
-        display: flex;
-        justify-content: space-between;
-    }
+  .footer-section button {
+    width: 50%;
+  }
 
-    .footer-section button {
-        width: 50%;
-    }
+  .header-section div {
+    width: 45%;
+  }
 
-    .header-section div {
-        width: 45%;
-    }
+  .bg-dark {
+    background-color: #343a40 !important;
+  }
 
-    .bg-dark {
-        background-color: #343a40 !important;
-    }
-
-    .text-light {
-        color: #fff !important;
-    }
-
-    </style>
+  .text-light {
+    color: #fff !important;
+  }
+</style>
 
 
 <div class="pcoded-content">
@@ -93,7 +93,8 @@
                         <td class="text-center">{{ form_product.product|as_crispy_field }}</td>
                         <td class="text-center">{{ form_product.quantity|as_crispy_field }}</td>
                         <td class="text-center">
-                          <button id="add-product" class="btn btn-primary" type="button">Add Product</button>
+                          <button id="add-product" class="btn btn-primary" type="button"><i
+                        class="ti-plus me-1"></i>Product</button>
                         </td>
                       </tr>
                       <tr>
@@ -104,9 +105,12 @@
                     </thead>
                     <tbody id="product-list"></tbody>
                   </table>
-
-                  <button id="finalize-note" class="btn btn-success mt-3">Finalize Note</button>
-                  <a href="/list-final-pro-note/" class="btn btn-warning mt-3">Cancel</a>
+                  <div class="d-flex gap-2">
+                    <button id="finalize-note" class="btn btn-success text-light mt-3"> <i class="ti-plus me-1"></i>
+                      Note</button>
+                    <a href="/list-final-pro-note/" class="btn btn-warning text-light mt-3"><i
+                        class="ti-close me-1"></i></a>
+                  </div>
                 </form>
               </div>
             </div>
@@ -143,7 +147,8 @@
       const row = `<tr>
         <td class="text-center">${productName}</td>
         <td class="text-center">${quantity}</td>
-        <td class="text-center"><button type="button" class="btn btn-danger delete-product" data-product-id="${productId}">Delete</button></td>
+        <td class="text-center"><button type="button" class="btn btn-danger delete-product" data-product-id="${productId}"><i
+                        class="ti-trash me-1"></i></button></td>
       </tr>`;
       $('#product-list').append(row);
     });

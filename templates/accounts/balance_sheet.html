@@ -68,64 +68,15 @@ Balance Sheet {% endblock title %}
                 <h4 class="text-center alert alert-warning">No Record Found</h4>
                 {% endif %}
               </div>
-              <hr class="mt-4">
-              <!-- Liabilities Accounts -->
-              <div class="col-12 mt-5">
-                <h4 class="">Liabilities Accounts Balance : {{liabilitie}}</h4>
-                <div class="card py">
-                  <div class="table-responsive py-2">
-                    {% if liabilitie %}
-                    <table class="table table-stripped table-bordered" id="petrol-table">
-                      <colgroup>
-                        <col width="5%">
-                        <col width="55%">
-                        <col width="40%">
-                      </colgroup>
-                      <thead>
-                        <tr class="bg-primary bg-gradient text-light text-center">
-                          <td>Sr.No.</td>
-                          <td>Account Tilte </td>
-                          <td>Account Balance</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for account, balance in liabilities.items %}
-                        <tr>
-                          <td class="text-center fs-5">{{forloop.counter}}</td>
-                          {% if account.name %}
-                          <td class="text-center fs-5">{{ account.name }}</td>
-                          <td class="text-center fs-5">{{balance}}</td>
-                          {% elif account.customer %}
-                          <td class="text-center fs-5">{{ account.customer.coname }}</td>
-                          <td class="text-center fs-5">{{balance}}</td>
-                          {% elif account.supplier %}
-                          <td class="text-center fs-5">{{ account.supplier.coname }}</td>
-                          <td class="text-center fs-5">{{balance}}</td>
-                          <li>{{ account.supplier.coname }} = {{ balance }}</li>
-                          {% elif account.cheque %}
-                          <td class="text-center fs-5">{{ account.cheque }}</td>
-                          <td class="text-center fs-5">{{balance}}</td>
-                          {% endif %}
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                {% else %}
-                <h4 class="text-center alert alert-warning">No Record Found</h4>
-                {% endif %}
-              </div>
             </div>
           </div>
           <hr class="mt-4">
-
-          <!-- Equit Accounts -->
+          <!-- Liabilities Accounts -->
           <div class="col-12 mt-5">
-            <h4 class=""> Equity Accounts Balance : {{ equity }}</h4>
+            <h4 class="">Liabilities Accounts Balance : {{liabilitie}}</h4>
             <div class="card py">
               <div class="table-responsive py-2">
-                {% if equity %}
+                {% if liabilitie %}
                 <table class="table table-stripped table-bordered" id="petrol-table">
                   <colgroup>
                     <col width="5%">
@@ -140,56 +91,7 @@ Balance Sheet {% endblock title %}
                     </tr>
                   </thead>
                   <tbody>
-                    {% for account, balance in equity_account.items %}
-                    <tr>
-                      <td class="text-center fs-5">{{forloop.counter}}</td>
-                      {% if account.name %}
-                      <td class="text-center fs-5">{{ account.name }}</td>
-                      <td class="text-center fs-5">{{balance}}</td>
-                      {% elif account.customer %}
-                      <td class="text-center fs-5">{{ account.customer.coname }}</td>
-                      <td class="text-center fs-5">{{balance}}</td>
-                      {% elif account.supplier %}
-                      <td class="text-center fs-5">{{ account.supplier.coname }}</td>
-                      <td class="text-center fs-5">{{balance}}</td>
-                      <li>{{ account.supplier.coname }} = {{ balance }}</li>
-                      {% elif account.cheque %}
-                      <td class="text-center fs-5">{{ account.cheque }}</td>
-                      <td class="text-center fs-5">{{balance}}</td>
-                      {% endif %}
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            {% else %}
-            <h4 class="text-center alert alert-warning">No Record Found</h4>
-            {% endif %}
-          </div>
-          <hr class="mt-4">
-
-          <!-- Revenue Accounts -->
-          <div class="col-12 mt-5">
-            <h4 class=""> Revenue Accounts Balance : {{ revenue }}</h4>
-            <div class="card py">
-              <div class="table-responsive py-2">
-                {% if revenue %}
-                <table class="table table-stripped table-bordered" id="petrol-table">
-                  <colgroup>
-                    <col width="5%">
-                    <col width="55%">
-                    <col width="40%">
-                  </colgroup>
-                  <thead>
-                    <tr class="bg-primary bg-gradient text-light text-center">
-                      <td>Sr.No.</td>
-                      <td>Account Tilte </td>
-                      <td>Account Balance</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for account, balance in revenue_account.items %}
+                    {% for account, balance in liabilities.items %}
                     <tr>
                       <td class="text-center fs-5">{{forloop.counter}}</td>
                       {% if account.name %}
@@ -217,66 +119,17 @@ Balance Sheet {% endblock title %}
             {% endif %}
           </div>
         </div>
-      </div>
-      <hr class="mt-4">
-
-      <!-- Expenses  Accounts -->
-      <div class="col-12 mt-5">
-        <h4 class=""> Expenses Accounts Balance : {{ expenses }}</h4>
-        <div class="card py">
-          <div class="table-responsive py-2">
-            {% if expenses %}
-            <table class="table table-stripped table-bordered" id="petrol-table">
-              <colgroup>
-                <col width="5%">
-                <col width="55%">
-                <col width="40%">
-              </colgroup>
-              <thead>
-                <tr class="bg-primary bg-gradient text-light text-center">
-                  <td>Sr.No.</td>
-                  <td>Account Tilte </td>
-                  <td>Account Balance</td>
-                </tr>
-              </thead>
-              <tbody>
-                {% for account, balance in expenses_account.items %}
-                <tr>
-                  <td class="text-center fs-5">{{forloop.counter}}</td>
-                  {% if account.name %}
-                  <td class="text-center fs-5">{{ account.name }}</td>
-                  <td class="text-center fs-5">{{balance}}</td>
-                  {% elif account.customer %}
-                  <td class="text-center fs-5">{{ account.customer.coname }}</td>
-                  <td class="text-center fs-5">{{balance}}</td>
-                  {% elif account.supplier %}
-                  <td class="text-center fs-5">{{ account.supplier.coname }}</td>
-                  <td class="text-center fs-5">{{balance}}</td>
-                  <li>{{ account.supplier.coname }} = {{ balance }}</li>
-                  {% elif account.cheque %}
-                  <td class="text-center fs-5">{{ account.cheque }}</td>
-                  <td class="text-center fs-5">{{balance}}</td>
-                  {% endif %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        {% else %}
-        <h4 class="text-center alert alert-warning">No Record Found</h4>
-        {% endif %}
       </div>
     </div>
-
+  </div>
   <hr class="mt-4">
 
-  <!-- Gain  Accounts -->
+  <!-- Equit Accounts -->
   <div class="col-12 mt-5">
-    <h4 class=""> Gain Accounts Balance : {{ gain }}</h4>
+    <h4 class=""> Equity Accounts Balance : {{ equity }}</h4>
     <div class="card py">
       <div class="table-responsive py-2">
-        {% if gain %}
+        {% if equity %}
         <table class="table table-stripped table-bordered" id="petrol-table">
           <colgroup>
             <col width="5%">
@@ -291,7 +144,7 @@ Balance Sheet {% endblock title %}
             </tr>
           </thead>
           <tbody>
-            {% for account, balance in gain_account.items %}
+            {% for account, balance in equity_account.items %}
             <tr>
               <td class="text-center fs-5">{{forloop.counter}}</td>
               {% if account.name %}
@@ -318,6 +171,160 @@ Balance Sheet {% endblock title %}
     <h4 class="text-center alert alert-warning">No Record Found</h4>
     {% endif %}
   </div>
+</div>
+</div>
+<hr class="mt-4">
+
+<!-- Revenue Accounts -->
+<div class="col-12 mt-5">
+  <h4 class=""> Revenue Accounts Balance : {{ revenue }}</h4>
+  <div class="card py">
+    <div class="table-responsive py-2">
+      {% if revenue %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="5%">
+          <col width="55%">
+          <col width="40%">
+        </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+            <td>Sr.No.</td>
+            <td>Account Tilte </td>
+            <td>Account Balance</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for account, balance in revenue_account.items %}
+          <tr>
+            <td class="text-center fs-5">{{forloop.counter}}</td>
+            {% if account.name %}
+            <td class="text-center fs-5">{{ account.name }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.customer %}
+            <td class="text-center fs-5">{{ account.customer.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.supplier %}
+            <td class="text-center fs-5">{{ account.supplier.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            <li>{{ account.supplier.coname }} = {{ balance }}</li>
+            {% elif account.cheque %}
+            <td class="text-center fs-5">{{ account.cheque }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <h4 class="text-center alert alert-warning">No Record Found</h4>
+  {% endif %}
+</div>
+</div>
+</div>
+<hr class="mt-4">
+
+<!-- Expenses  Accounts -->
+<div class="col-12 mt-5">
+  <h4 class=""> Expenses Accounts Balance : {{ expenses }}</h4>
+  <div class="card py">
+    <div class="table-responsive py-2">
+      {% if expenses %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="5%">
+          <col width="55%">
+          <col width="40%">
+        </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+            <td>Sr.No.</td>
+            <td>Account Tilte </td>
+            <td>Account Balance</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for account, balance in expenses_account.items %}
+          <tr>
+            <td class="text-center fs-5">{{forloop.counter}}</td>
+            {% if account.name %}
+            <td class="text-center fs-5">{{ account.name }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.customer %}
+            <td class="text-center fs-5">{{ account.customer.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.supplier %}
+            <td class="text-center fs-5">{{ account.supplier.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            <li>{{ account.supplier.coname }} = {{ balance }}</li>
+            {% elif account.cheque %}
+            <td class="text-center fs-5">{{ account.cheque }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <h4 class="text-center alert alert-warning">No Record Found</h4>
+  {% endif %}
+</div>
+</div>
+</div>
+
+<hr class="mt-4">
+
+<!-- Gain  Accounts -->
+<div class="col-12 mt-5">
+  <h4 class=""> Gain Accounts Balance : {{ gain }}</h4>
+  <div class="card py">
+    <div class="table-responsive py-2">
+      {% if gain %}
+      <table class="table table-stripped table-bordered" id="petrol-table">
+        <colgroup>
+          <col width="5%">
+          <col width="55%">
+          <col width="40%">
+        </colgroup>
+        <thead>
+          <tr class="bg-primary bg-gradient text-light text-center">
+            <td>Sr.No.</td>
+            <td>Account Tilte </td>
+            <td>Account Balance</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for account, balance in gain_account.items %}
+          <tr>
+            <td class="text-center fs-5">{{forloop.counter}}</td>
+            {% if account.name %}
+            <td class="text-center fs-5">{{ account.name }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.customer %}
+            <td class="text-center fs-5">{{ account.customer.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% elif account.supplier %}
+            <td class="text-center fs-5">{{ account.supplier.coname }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            <li>{{ account.supplier.coname }} = {{ balance }}</li>
+            {% elif account.cheque %}
+            <td class="text-center fs-5">{{ account.cheque }}</td>
+            <td class="text-center fs-5">{{balance}}</td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <h4 class="text-center alert alert-warning">No Record Found</h4>
+  {% endif %}
+</div>
 </div>
 </div>
 <hr class="mt-4">
@@ -423,19 +430,15 @@ Balance Sheet {% endblock title %}
 </div>
 </div>
 <hr class="mt-4">
-<ul>
+<!-- <ul>
   <h2>Accounts Eqution</h2>
   <h4>Assets = Liabilities + Equity :</h4>
   <h4> {{asset}} = {{liabilitie}} + {{equity}} = {{liabilitie|plus:equity}} </h4>
   <h4>Should be LHS = RHS otherwise balance sheet is not balanced<h4>
-</ul>
+</ul> -->
 </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-</div>
+
 <script>
   $(document).ready(function () {
     console.log("i m jqurey");

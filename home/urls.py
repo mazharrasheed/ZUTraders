@@ -174,6 +174,9 @@ urlpatterns = [
 # Final Product Note
     path('list-final-pro-note/', final_product_note.list_final_product_note, name='list_final_pro_note'),
     path('create-final-pro-note/', final_product_note.create_final_product_note, name='create_final_pro_note'),
+    path('edit-final-pro-note/<int:id>', final_product_note.edit_final_product_note, name='edit_final_pro_note'),
+    path('delete-final-pro-note/<int:id>', final_product_note.delete_final_product_note, name='delete_final_pro_note'),
+    path('print-final-pro-note/<int:id>', final_product_note.print_final_product_note, name='print_final_pro_note'),
 
 # store purchase
     path('list-store-purchase/', store_purchase.list_store_purchase, name='list_store_purchase'),

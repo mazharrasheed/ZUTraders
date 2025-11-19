@@ -72,12 +72,7 @@ class Final_Product(models.Model):
     ]
 
         productname=models.CharField(max_length=255,unique=True)
-        unit=models.CharField(max_length=50,choices=UNIT_CHOICES,default=NOS)
         category=models.ForeignKey(Finish_Product_Category,on_delete=models.RESTRICT)
-        company=models.ForeignKey(Company,on_delete=models.RESTRICT)
-        purchase=models.PositiveIntegerField(null=True,blank=True)
-        sale_rate=models.PositiveIntegerField(null=True,blank=True)
-        labour=models.FloatField(null=True,blank=True)
         product_status=models.BooleanField(default=False)
         is_deleted = models.BooleanField(default=False)
         product_slug=AutoSlugField(populate_from="productname",unique=True,null=True,default=None)
@@ -89,8 +84,11 @@ class Final_Product(models.Model):
             Return the price of this product for the given customer based on their price list.
             If no price is found, return None.
             """
+            print("Fetching price for customer:", customer)
             if not customer or not customer.price_list:
+                print("No customer or price list found.")
                 return None
+            
             try:
                 return Price_List_Note_Products.objects.filter(
                     price_list=customer.price_list,
@@ -185,7 +183,8 @@ class Customer(models.Model):
 
 class Sales_Receipt(models.Model):
     products = models.ManyToManyField(Final_Product, through='Sales_Receipt_Product')
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField()
+    # date_created = models.DateTimeField(auto_now_add=True)
     customer_name =  models.ForeignKey(Customer,on_delete=models.RESTRICT,null=True,blank=True)
     customer =  models.CharField(max_length=220,null=True,blank=True)
     phone_number = models.CharField(max_length=12)
@@ -565,8 +564,9 @@ class Transaction(models.Model):
 
     transaction_ref=models.CharField(max_length=100,null=True,blank=True)
     transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRNSACTION_TYPE_CHOICES)
-    date = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
+    date = models.DateTimeField()
+    description = models.TextField(blank=True,null=True)
     debit_account = models.ForeignKey(Account, related_name='debit_transactions', on_delete=models.RESTRICT)
     credit_account = models.ForeignKey(Account, related_name='credit_transactions', on_delete=models.RESTRICT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)

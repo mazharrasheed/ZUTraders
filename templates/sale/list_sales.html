@@ -133,8 +133,10 @@ Sales-List
                         </td>
                         
                         <td class="text-center">
+
+                          <div class="d-flex"> 
                           {% if perms.home.view_sales_receipt %}
-                          <a class="btn btn-success text-light" href="{% url 'print_salereceipt' salereceipt.id %}">
+                          <a class="btn btn-success text-light me-2" href="{% url 'print_salereceipt' salereceipt.id %}">
                             <i class="ti-printer me-1"></i> </a>
                           {% endif %}
 
@@ -142,7 +144,7 @@ Sales-List
 
                           {% if salereceipt.make_transaction %}
 
-                          <button class="btn btn-warning text-light me-1" disabled="true" href="{% if cash %}
+                          <button class="btn btn-warning text-light me-2" disabled="true" href="{% if cash %}
                           {% url 'edit_cashsale_receipt' salereceipt.id %}
                           {% else %}
                         
@@ -172,6 +174,7 @@ Sales-List
                           </button>
                           {% endif %}
                           {% endif %}
+                          </div>
                         </td>
                         
                       </tr>

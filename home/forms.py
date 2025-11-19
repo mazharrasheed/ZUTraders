@@ -8,7 +8,7 @@ from django.contrib.auth.forms import (UserChangeForm, UserCreationForm,
                                        UsernameField)
 from django.contrib.auth.models import User,Group
 from django.utils.translation import gettext_lazy as _
-
+from datetime import date
 from .models import Blog
 # forms.py
 from crispy_forms.helper import FormHelper
@@ -97,8 +97,8 @@ class Finish_ProductForm(forms.ModelForm):
     category = forms.ModelChoiceField(queryset=Finish_Product_Category.objects.filter(is_deleted=False), empty_label="Select Category")
     class Meta:
         model = Final_Product
-        fields = ['productname','unit','category','company','purchase','sale_rate','labour' ]
-        labels={'productname':'Product Name','sale_rate':'Sale Rate'
+        fields = ['productname','category',]
+        labels={'productname':'Product Name',
                 }
 
         widgets = {
@@ -115,10 +115,7 @@ class Finish_ProductForm(forms.ModelForm):
 
         placeholders = {
             'productname': 'Enter product name',
-            'unit':'Select Unit',
-            'purchase':'Enter purchase rate',
-            'sale_rate':'Enter sale rate',
-            'labour':'Enter labur cost',
+            'category':'Select Category',
         }
         for field_name, placeholder in placeholders.items():
             self.fields[field_name].widget.attrs.update({'placeholder': placeholder})
@@ -128,8 +125,8 @@ class Finish_ProductForm(forms.ModelForm):
             self.fields[field_name].widget.attrs.update({'class': 'form-control'})  # Add class to widgets
             self.fields[field_name].label_tag = lambda label, tag=None, attrs=None, *args, **kwargs: f'<label class="fs-5" for="{self[field_name].id_for_label}">{label}</label>'
 
-        self.fields['category'].empty_label = "Select"
-        self.fields['company'].empty_label = "Select"
+        # self.fields['category'].empty_label = "Select Category"
+    
 
 
 class ProductForm(forms.ModelForm):
@@ -554,7 +551,9 @@ class Store_Purchase_ProductForm(forms.ModelForm):
             if Store_Purchase_Product.objects.filter(store_purchase_note=self.salereceipt, product=product).exists():
                 self.add_error('product', f'The product "{product}" has already been added to this Purchase note.')
         return cleaned_data
-
+    
+import datetime
+date_today=datetime.date.today()
 class Sales_ReceiptForm(forms.ModelForm):
     customer_name = forms.ModelChoiceField(
         queryset=Customer.objects.filter(is_deleted=False),
@@ -564,12 +563,16 @@ class Sales_ReceiptForm(forms.ModelForm):
 
     class Meta:
         model = Sales_Receipt
-        fields = ['customer_name',]
+        fields = ['customer_name','date_created']
+        widgets = {
+            'date_created': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(Sales_ReceiptForm, self).__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['customer_name'].initial = self.instance.customer_name
+        self.fields['date_created'].initial=date_today
             
     def clean(self):
         cleaned_data = super().clean()
@@ -644,16 +647,21 @@ class Sales_Cash_ReceiptForm(forms.ModelForm):
     phone_number=forms.CharField(max_length=12 , required=True)
     class Meta:
         model = Sales_Receipt
-        fields = ['customer', 'phone_number']
+        fields = ['customer', 'date_created','phone_number']
+        widgets = {
+            'date_created': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
     def __init__(self, *args, **kwargs):
         super(Sales_Cash_ReceiptForm, self).__init__(*args, **kwargs)
+
         # Check if an instance is passed
         if self.instance and self.instance.pk:
             # Set the initial value of customer_name
             self.fields['customer'].initial = self.instance.customer
+        self.fields['date_created'].initial=date_today
 
 class Sales_Cash_Receipt_ProductForm(forms.ModelForm):
-    product = forms.ModelChoiceField(queryset=Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
+    product = forms.ModelChoiceField(queryset=Final_Product.objects.filter(is_deleted=False,product_status=True), empty_label="Select Product")
     quantity = forms.IntegerField(min_value=1, initial=1, label='Quantity')
     unit_price = forms.FloatField( label='Unit Price',required=True)
 
@@ -670,7 +678,7 @@ class Sales_Cash_Receipt_ProductForm(forms.ModelForm):
         product = cleaned_data.get('product')
         if product and self.salereceipt:
             if Sales_Receipt_Product.objects.filter(salereceipt=self.salereceipt, product=product).exists():
-                self.add_error('product', f'The product "{product}" has already been added to this gate pass.')
+                self.add_error('product', f'The product "{product}" has already been added to this sales reciept.')
         return cleaned_data
 
 
@@ -945,7 +953,10 @@ class TransactionForm(forms.ModelForm):
     amount=forms.fields.IntegerField(min_value=0,label="Amount")
     class Meta:
         model = Transaction
-        fields = ['description', 'debit_account','credit_account','amount','transaction_type']
+        fields = ['description', 'debit_account','credit_account','amount','date','transaction_type']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)

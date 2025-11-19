@@ -90,11 +90,10 @@ Edit Slae Receipt
                   <h6>Cell: 0xxx-xxxxxxx</h6>
 								</div>
 								<div style="margin-right:50px;width:500px">
-									<p><strong>Date:</strong> Auto</p>
+									<p>{{ form_salereceipt.date_created|as_crispy_field }}</p>
 									<p style="margin-top:10px"><span class="ghfghg">{{ form_salereceipt.customer|as_crispy_field }}</span>
 									</p>
 									<p>{{form_salereceipt.phone_number|as_crispy_field }}</p>
-
 								</div>
 							</div>
 							<table>
@@ -105,14 +104,12 @@ Edit Slae Receipt
 										<td>{{ form.quantity|as_crispy_field }}</td>
 										<td>{{ form.unit_price|as_crispy_field }}</td>
 										<td id="amount">Auto</td>
-
 										<td>
 											<button id="add-product" class="btn btn-primary" type="button">Add Product</button>
 										</td>
 									</tr>
 									<tr>
 										<th>Product</th>
-
 										<th>In_stock</th>
 										<th>Quantity</th>
 										<th>Unit Price</th>
@@ -128,7 +125,6 @@ Edit Slae Receipt
 										<td>{{ product.quantity }}</td>
 										<td>{{ product.unit_price }}</td>
 										<td>{{ product.amount }}</td>
-
 										<td>
 											<button class="delete-product btn btn-danger" data-product-id="{{ product.product.id }}">
 												Delete

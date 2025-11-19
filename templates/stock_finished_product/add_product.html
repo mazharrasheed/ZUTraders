@@ -18,7 +18,7 @@ Gatepas {% endblock title %}
           <div class="row">
     {% include 'stock_finished_product/product_menu.html' %}
     <div class="col-12 ">
-      <h3 class="text-center alert alert-info">Add Product</h3>
+      <h3 class="">Add Product</h3>
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
        <div class="row">
@@ -32,9 +32,9 @@ Gatepas {% endblock title %}
                   </div>
                   {% endfor %}
                 </div>
-        <input type="submit" class="btn btn-success" {% if update %} value="Update Product" {% else %}
+        <input type="submit" class="btn btn-success text-light" {% if update %} value="Update Product" {% else %}
           value="Add Product" {%endif %}>
-        <a href="/finished_product/" class="btn btn-warning">Products</a>
+        <a href="/finished_product/" class="btn btn-warning text-light">Products</a>
       </form>
 
     </div>

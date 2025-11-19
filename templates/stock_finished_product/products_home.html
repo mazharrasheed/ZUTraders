@@ -23,7 +23,7 @@ Products {% endblock title %}
             {% include 'stock_finished_product/product_menu.html' %}
             <!-- Trigger button -->
             <div id="product" class="col-md-12">
-              <h3 class="">Items List</h3>
+              <h3 class="">Products List</h3>
             </div>
             <div class="card py">
               <div class="table-responsive py-2">
@@ -35,7 +35,7 @@ Products {% endblock title %}
                         Sr#
                       </th>
                       <th class="border-bottom fw-bolder text-center" scope="col">
-                        Item ID#
+                        Product ID#
                       </th>
                       <th class="border-bottom fw-bolder text-center" scope="col">
                         Product Name
@@ -46,9 +46,7 @@ Products {% endblock title %}
                       <th class="border-bottom fw-bolder text-center" scope="col">
                         Status
                       </th>
-                      <th class="border-bottom fw-bolder text-center" scope="col">
-                        Units
-                      </th>
+              
                       <th class="border-bottom fw-bolder text-center" scope="col">
                         Actions
                       </th>
@@ -59,7 +57,7 @@ Products {% endblock title %}
                     <tr id="salereceipt-{{ data.id }}">
                       <td class="text-center">{{ forloop.counter }}</td>
                       <td class="text-center">{{ data.id }}</td>
-                      <td class="text-center">{{ data.productname }}</td>
+                      <td class="text-center">{{ data.productname|capitalize_after_space}}</td>
                       <td class="text-center">{{ data.get_current_stock }}</td>
                       <td class="text-center">
                         {% if data.product_status %}
@@ -67,7 +65,7 @@ Products {% endblock title %}
                         {% else %}
                         In Active 
                         {% endif %}</td>
-                      <td class="text-center">{{ data.unit }}</td>
+                      
                       <td>
                         {% if perms.home.change_final_product %}
                         <a class="btn btn-sm btn-warning fs-5 text-light" href={% url 'editfinishedproduct' id=data.id %}>
