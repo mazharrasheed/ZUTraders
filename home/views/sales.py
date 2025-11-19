@@ -10,7 +10,8 @@ from django.template.loader import render_to_string
 from django.db.models import Avg,Min,Max,Count,Sum
 from collections import defaultdict
 from django.db import IntegrityError
-
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 @login_required
 def get_final_product_stock(request,id):
@@ -453,6 +454,7 @@ def make_transaction(request, id):
             debit_account=debit_account,
             credit_account=credit_account,
             amount=amount,
+            transaction_ref="TRX"+str(salereceipt.id)+str(datetime.now().strftime("%Y%m%d%H%M%S")),
             made_by=request.user
         )
         transaction.save()
@@ -465,6 +467,7 @@ def make_transaction(request, id):
             "status": "success",
             "message": "Transaction added successfully!",
             "transaction_id": transaction.id,
+            "transaction_ref": transaction.transaction_ref,
             "amount": amount
         })
 

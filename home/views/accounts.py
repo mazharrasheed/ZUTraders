@@ -137,6 +137,7 @@ def add_transaction(request):
         if form.is_valid():
             transaction=form.save(commit=False)
             transaction.made_by=request.user
+            transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
             return redirect('transaction')
     else:
@@ -190,10 +191,10 @@ def add_transaction(request):
         total_assets = int(sum(assets.values()))
         total_liabilities = int(sum(liabilities.values()))
         total_equity = int(sum(equity_account.values()))
-        if total_assets == total_liabilities+total_equity :
-            messages.success(request,"Balance Sheet is Balanced  !!")    
-        else:
-            messages.error(request," Balance Sheet is not Balanced Please check !!")
+        # if total_assets == total_liabilities+total_equity :
+        #     messages.success(request,"Balance Sheet is Balanced  !!")    
+        # else:
+        #     messages.error(request," Balance Sheet is not Balanced Please check !!")
     return render(request, 'accounts/add_transaction.html', {'form': form,'mydata': transactions})
 
 @login_required
@@ -206,6 +207,7 @@ def edit_transaction(request,id):
         if form.is_valid():
             transaction=form.save(commit=False)
             transaction.made_by=request.user
+            transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
             messages.success(request,"Transaction Updated successfully !!")
             return redirect('transaction')

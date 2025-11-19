@@ -30,6 +30,9 @@ Add Transaction {% endblock title %}
           <div class="col-md-9">
             <div class="row">
           <div class="row">
+            {{ form.transaction_type|as_crispy_field }}
+          </div>
+          <div class="row">
             {{ form.debit_account|as_crispy_field }}
           </div>
           <div class="row">

@@ -99,21 +99,37 @@ Sales-List
                         <td class="text-center">
                           {{ total_amount|get_amount:salereceipt.id}}
                         </td>
-                        <td class="text-center" >{% if customer %}
-                          {% if perms.home.add_transaction %}
-                          {% if salereceipt.make_transaction %}
-                          <button class="btn alert-success" href="#" disabled>
-                            Added
-                          </button>
-                          {% else %}
 
+
+                        <td class="text-center" >
+                          
+                          {% if customer %}
+
+                          {% if perms.home.add_transaction %}
+
+                          {% if salereceipt.make_transaction %}
+                          
+                            Ref: {{ salereceipt.transaction_ref }}
+                     
+                          {% else %}
                           <button class="btn btn-info transaction-btn" data-id="{{ salereceipt.id }}"
                             href="{% url 'maketransaction' salereceipt.id %}">
                             <i class="ti-plus me-1"></i> Add
                           </button>
                           {% endif %}
+
                           {% endif %}
+
+                          {% else %}
+
+                         {% if salereceipt.transaction_ref  %}
+                           Ref:{{salereceipt.transaction_ref}}
+                         {% endif %}
+                         
+                      
+
                           {% endif %}
+
                         </td>
                         
                         <td class="text-center">
