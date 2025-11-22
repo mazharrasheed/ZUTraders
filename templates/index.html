@@ -12,6 +12,7 @@
             <div class="page-wrapper">
                 <div class="page-body">
                     <div class="row">
+                        <h3>Admin</h3>
                         <div class="col-md-6 col-xl-3">
                             <div class="card widget-card-1">
                                 <div class="card-block-small">
@@ -33,6 +34,9 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <h3>Accounts</h3>
                         <div class="col-md-6 col-xl-3">
                             <div class="card widget-card-1">
                                 <div class="card-block-small">
@@ -96,83 +100,119 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
-                    <div class="row">
-                        <!-- card1 start -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card widget-card-1">
-                                <div class="card-block-small">
-                                    <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
-                                    <span class="text-c-blue f-w-600">All Accounts</span>
-                                    
-                                    <div>
-                                       
+
+                </div>
+                <div class="row">
+                    <h3>Store</h3>
+                    <!-- card1 start -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card widget-card-1">
+                            <div class="card-block-small">
+                                <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
+                                <span class="text-c-blue f-w-600">Items</span>
+
+                                <div>
+
                                     <h4>
-                                        {% if accounts %}
-                                        {{accounts}}
+                                        {% if items %}
+                                        {{items}}
                                         {% else %}
                                         No record found
                                         {% endif %}
                                     </h4>
-                                    </div>
-                                    <a class="f-left btn btn-success text-light " href="/create_accounts/">
+                                </div>
+                                <a class="f-left btn btn-success text-light " href="/product/">
+                                    <i class="icofont icofont-users-alt-4"></i>
+                                    All Items
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- card1 end -->
+                    <!-- card1 start -->
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card widget-card-1">
+                            <div class="card-block-small">
+                                <i class="icofont icofont-ui-home bg-c-pink card1-icon"></i>
+                                <span class="text-c-pink f-w-600">Products</span>
+                                <h4>{% if products %}
+                                    {{products}}
+                                    {% else %}
+                                    No record found
+                                    {% endif %}</h4>
+                                <div>
+                                    <a class="f-left btn btn-success text-light " href="/finished_product/">
                                         <i class="icofont icofont-users-alt-4"></i>
-                                        All Accounts
+                                        All Products
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <!-- card1 end -->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <h3>Sales</h3>
+                    <!-- card1 end -->
+                    <!-- Statestics Start -->
+                    <div class="col-md-12 col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Statestics</h5>
+                                <div class="card-header-left ">
+                                </div>
+                                <div class="card-header-right">
+                                    <ul class="list-unstyled card-option">
+                                        <li><i class="icofont icofont-simple-left "></i></li>
+                                        <li><i class="icofont icofont-maximize full-card"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card"></i></li>
+                                        <li><i class="icofont icofont-error close-card"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-block">
+                                <div id="statestics-chart" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
                         <!-- card1 start -->
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-4 col-xl-3">
                             <div class="card widget-card-1">
                                 <div class="card-block-small">
-                                    <i class="icofont icofont-ui-home bg-c-pink card1-icon"></i>
-                                    <span class="text-c-pink f-w-600">Revenue</span>
-                                    <h4>$23,589</h4>
+                                    <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
+                                    <span class="text-c-blue f-w-600">All Sales</span>
                                     <div>
-                                        <span class="f-left m-t-10 text-muted">
-                                            <i class="text-c-pink f-16 icofont icofont-calendar m-r-10"></i>Last 24
+                                        <h4>
+                                            {% if sales %}
+                                            {{sales}}
+                                            {% else %}
+                                            No record found
+                                            {% endif %}
+                                        </h4>
+                                    </div>
+                                    <a class="f-left btn btn-success text-light " href="/list-sales/">
+                                        <i class="icofont icofont-users-alt-4"></i>
+                                        Total Sales
+                                    </a>
+                                    <span class="f-left m-t-10 text-muted">
+                                        <a class=" " href="/list-sales/">
+                                            <i class="text-c-pink f-16 icofont icofont-calendar m-r-10 ms-3"></i>Last 24
                                             hours
-                                        </span>
-                                    </div>
+                                        </a>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <!-- card1 end -->
-                        <!-- card1 start -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card widget-card-1">
-                                <div class="card-block-small">
-                                    <i class="icofont icofont-warning-alt bg-c-green card1-icon"></i>
-                                    <span class="text-c-green f-w-600">Fixed issue</span>
-                                    <h4>45</h4>
-                                    <div>
-                                        <span class="f-left m-t-10 text-muted">
-                                            <i class="text-c-green f-16 icofont icofont-tag m-r-10"></i>Tracked via
-                                            microsoft
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- card1 end -->
-                        <!-- card1 start -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card widget-card-1">
-                                <div class="card-block-small">
-                                    <i class="icofont icofont-social-twitter bg-c-yellow card1-icon"></i>
-                                    <span class="text-c-yellow f-w-600">Followers</span>
-                                    <h4>+562</h4>
-                                    <div>
-                                        <span class="f-left m-t-10 text-muted">
-                                            <i class="text-c-yellow f-16 icofont icofont-refresh m-r-10"></i>Just update
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                     
-                        {% endblock body %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}
