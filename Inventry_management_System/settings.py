@@ -184,3 +184,6 @@ ALLOWED_HOSTS = ["zutardersguj.pythonanywhere.com",'127.0.0.1']
 
 # BYPASS_AUTH = True   # ← turn OFF authentication globally
 
+
+
+
