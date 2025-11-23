@@ -152,14 +152,15 @@
                     </div>
                 </div>
 
-                <div class="row">
+               <div class="row">
                     <h3>Sales</h3>
                     <!-- card1 end -->
                     <!-- Statestics Start -->
                     <div class="col-md-12 col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Statestics</h5>
+                                <h5>Monthly Sales <i class="text-c-pink f-16 icofont icofont-calendar m-r-10 ms-3"></i>Last 12 Months</h5>
+                                
                                 <div class="card-header-left ">
                                 </div>
                                 <div class="card-header-right">
@@ -172,7 +173,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="card-block">
+                            <div class="card-block" style="width:100%">
                                 <div id="statestics-chart" style="height:400px;"></div>
                             </div>
                         </div>
@@ -180,30 +181,25 @@
                     <div class="row">
 
                         <!-- card1 start -->
-                        <div class="col-md-4 col-xl-3">
-                            <div class="card widget-card-1">
+                        <div class="col-md-4 col-xl-6">
+                            <div class="card widget-card-1" >
                                 <div class="card-block-small">
                                     <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
                                     <span class="text-c-blue f-w-600">All Sales</span>
-                                    <div>
+                                    <div style="text-align: left;">
                                         <h4>
-                                            {% if sales %}
-                                            {{sales}}
+                                            {% if total_sale %}
+                                            Tolal Sales Amount = Rs. {{total_sale}}
                                             {% else %}
                                             No record found
                                             {% endif %}
                                         </h4>
+                                    
                                     </div>
                                     <a class="f-left btn btn-success text-light " href="/list-sales/">
                                         <i class="icofont icofont-users-alt-4"></i>
-                                        Total Sales
+                                        Sales Details
                                     </a>
-                                    <span class="f-left m-t-10 text-muted">
-                                        <a class=" " href="/list-sales/">
-                                            <i class="text-c-pink f-16 icofont icofont-calendar m-r-10 ms-3"></i>Last 24
-                                            hours
-                                        </a>
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -214,5 +210,43 @@
     </div>
 </div>
 
+<!-- Include AmCharts v4 scripts in your template -->
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chartData = JSON.parse('{{ chart_data_json|safe }}');
+
+    setTimeout(() => {
+        am4core.useTheme(am4themes_animated);
+
+        var chart = am4core.create("statestics-chart", am4charts.XYChart);
+
+        chart.data = chartData.labels.map((label, i) => ({
+            category: label,
+            value: chartData.values[i]
+        }));
+
+        // X Axis
+        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "category";
+        categoryAxis.renderer.grid.template.disabled = true;  // remove vertical grid lines
+
+        // Y Axis
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.disabled = true;     // remove horizontal grid lines
+
+        // Series
+        var series = chart.series.push(new am4charts.ColumnSeries());
+        series.dataFields.valueY = "value";
+        series.dataFields.categoryX = "category";
+        series.name = "Sales";
+        series.columns.template.tooltipText = "{category}: [bold]{value}[/]";
+    }, 600);
+});
+
+</script>
 
 {% endblock body %}

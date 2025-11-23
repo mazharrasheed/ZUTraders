@@ -566,7 +566,6 @@ class Transaction(models.Model):
     transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRNSACTION_TYPE_CHOICES)
     description = models.TextField()
     date = models.DateTimeField()
-    description = models.TextField(blank=True,null=True)
     debit_account = models.ForeignKey(Account, related_name='debit_transactions', on_delete=models.RESTRICT)
     credit_account = models.ForeignKey(Account, related_name='credit_transactions', on_delete=models.RESTRICT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
