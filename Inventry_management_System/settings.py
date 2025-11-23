@@ -179,7 +179,7 @@ MEDIA_URL='/images/uploaded/'
 
 MEDIA_ROOT=BASE_DIR
 
-ALLOWED_HOSTS = ["kainatind.pythonanywhere.com",'127.0.0.1']
+ALLOWED_HOSTS = ["zutardersguj.pythonanywhere.com",'127.0.0.1']
 
 
 # BYPASS_AUTH = True   # ← turn OFF authentication globally
