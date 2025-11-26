@@ -11,6 +11,60 @@
         <div class="main-body">
             <div class="page-wrapper">
                 <div class="page-body">
+                     <div class="row">
+                    <h3>Sales</h3>
+                    <!-- card1 end -->
+                    <!-- Statestics Start -->
+                    <div class="col-md-12 col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Monthly Sales <i class="text-c-pink f-16 icofont icofont-calendar m-r-10 ms-3"></i>Last 12 Months</h5>
+                                
+                                <div class="card-header-left ">
+                                </div>
+                                <div class="card-header-right">
+                                    <ul class="list-unstyled card-option">
+                                        <li><i class="icofont icofont-simple-left "></i></li>
+                                        <li><i class="icofont icofont-maximize full-card"></i></li>
+                                        <li><i class="icofont icofont-minus minimize-card"></i></li>
+                                        <li><i class="icofont icofont-refresh reload-card"></i></li>
+                                        <li><i class="icofont icofont-error close-card"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-block" style="width:100%">
+                                <div id="statestics-chart" style="height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <!-- card1 start -->
+                        <div class="col-md-4 col-xl-6">
+                            <div class="card widget-card-1" >
+                                <div class="card-block-small">
+                                    <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
+                                    <span class="text-c-blue f-w-600">All Sales</span>
+                                    <div style="text-align: left;">
+                                        <h4>
+                                            {% if total_sale %}
+                                            Tolal Sales Amount = Rs. {{total_sale}}
+                                            {% else %}
+                                            No record found
+                                            {% endif %}
+                                        </h4>
+                                    
+                                    </div>
+                                    <a class="f-left btn btn-success text-light " href="/list-sales/">
+                                        <i class="icofont icofont-users-alt-4"></i>
+                                        Sales Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                     <div class="row">
                         <h3>Admin</h3>
                         <div class="col-md-6 col-xl-3">
@@ -145,60 +199,6 @@
                                     <a class="f-left btn btn-success text-light " href="/finished_product/">
                                         <i class="icofont icofont-users-alt-4"></i>
                                         All Products
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-               <div class="row">
-                    <h3>Sales</h3>
-                    <!-- card1 end -->
-                    <!-- Statestics Start -->
-                    <div class="col-md-12 col-xl-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Monthly Sales <i class="text-c-pink f-16 icofont icofont-calendar m-r-10 ms-3"></i>Last 12 Months</h5>
-                                
-                                <div class="card-header-left ">
-                                </div>
-                                <div class="card-header-right">
-                                    <ul class="list-unstyled card-option">
-                                        <li><i class="icofont icofont-simple-left "></i></li>
-                                        <li><i class="icofont icofont-maximize full-card"></i></li>
-                                        <li><i class="icofont icofont-minus minimize-card"></i></li>
-                                        <li><i class="icofont icofont-refresh reload-card"></i></li>
-                                        <li><i class="icofont icofont-error close-card"></i></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card-block" style="width:100%">
-                                <div id="statestics-chart" style="height:400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-
-                        <!-- card1 start -->
-                        <div class="col-md-4 col-xl-6">
-                            <div class="card widget-card-1" >
-                                <div class="card-block-small">
-                                    <i class="icofont icofont-pie-chart bg-c-pink card1-icon"></i>
-                                    <span class="text-c-blue f-w-600">All Sales</span>
-                                    <div style="text-align: left;">
-                                        <h4>
-                                            {% if total_sale %}
-                                            Tolal Sales Amount = Rs. {{total_sale}}
-                                            {% else %}
-                                            No record found
-                                            {% endif %}
-                                        </h4>
-                                    
-                                    </div>
-                                    <a class="f-left btn btn-success text-light " href="/list-sales/">
-                                        <i class="icofont icofont-users-alt-4"></i>
-                                        Sales Details
                                     </a>
                                 </div>
                             </div>
