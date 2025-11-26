@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import Add_Blog, AdminUserPrifoleForm, EditUserPrifoleForm, GatePassProductForm,Sign_Up
-from ..models import Blog,GatePass, GatePassProduct,Employee,Customer,Suppliers,Account,Product,Final_Product,Sales_Receipt,Sales_Receipt_Product,Transaction
+from ..models import Blog,GatePass, GatePassProduct,Employee,Customer,Suppliers,Account,Item,Final_Product,Sales_Receipt,Sales_Receipt_Product,Transaction
 from django.core.exceptions import PermissionDenied
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
@@ -24,7 +24,7 @@ def index(request):
     suppliers=Suppliers.objects.all().count()
     employees=Employee.objects.all().count()
     accounts=Account.objects.all().count()
-    items=Product.objects.all().count()
+    items=Item.objects.all().count()
     sales=Sales_Receipt.objects.all().count()
 
     for account in Account.objects.all():
