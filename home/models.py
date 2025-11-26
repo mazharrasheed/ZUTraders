@@ -190,6 +190,7 @@ class Sales_Receipt(models.Model):
     phone_number = models.CharField(max_length=12)
     created_by = models.ForeignKey(User, on_delete=models.RESTRICT,null=True)
     make_transaction = models.BooleanField(default=False)
+    transaction_ref=models.CharField(max_length=100,null=True,blank=True)
     is_cash = models.BooleanField(default=False)
 
     def __str__(self):
@@ -531,6 +532,7 @@ class Account(models.Model):
     contact=models.CharField(max_length=12,null=True,unique=True,blank=True)
     mobile=models.CharField(max_length=12,null=True , blank=True,unique=True)
     date = models.DateTimeField(default=datetime.now())
+    active=models.BooleanField(default=True)
     is_deleted=models.BooleanField(default=False)
     def __str__(self):
         if self.name:
@@ -544,8 +546,26 @@ class Account(models.Model):
         return f"Account #{self.id}"
 
 class Transaction(models.Model):
+
+    CASHRECEIVED = 'Cash Received'
+    CASHPAYED = 'Cash Payed'
+    SALES = 'Sales'
+    TRANSFER = 'Account to Account'
+   
+
+    TRNSACTION_TYPE_CHOICES = [
+        (CASHRECEIVED, 'Cash Payed'),
+        (CASHPAYED, 'Cash Recieved'),
+        (SALES, 'Sales'),
+        (TRANSFER, 'Account to Account'),
+        
+    ]
+
+
+    transaction_ref=models.CharField(max_length=100,null=True,blank=True)
+    transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRNSACTION_TYPE_CHOICES)
+    description = models.TextField()
     date = models.DateTimeField()
-    description = models.TextField(blank=True,null=True)
     debit_account = models.ForeignKey(Account, related_name='debit_transactions', on_delete=models.RESTRICT)
     credit_account = models.ForeignKey(Account, related_name='credit_transactions', on_delete=models.RESTRICT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)

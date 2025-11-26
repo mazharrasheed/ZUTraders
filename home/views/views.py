@@ -7,21 +7,71 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib.auth.decorators import login_required,permission_required
 from ..forms import Add_Blog, AdminUserPrifoleForm, EditUserPrifoleForm, GatePassProductForm,Sign_Up
-from ..models import Blog,GatePass, GatePassProduct,Employee,Customer,Suppliers,Account
+from ..models import Blog,GatePass, GatePassProduct,Employee,Customer,Suppliers,Account,Product,Final_Product,Sales_Receipt,Sales_Receipt_Product,Transaction
 from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from django.utils.dateformat import DateFormat
+from django.utils.formats import get_format
+import json
 # Create your views here.
 
 @login_required
+
 def index(request):
     users=User.objects.all().count()
     customers=Customer.objects.all().count()
     suppliers=Suppliers.objects.all().count()
     employees=Employee.objects.all().count()
     accounts=Account.objects.all().count()
+    items=Product.objects.all().count()
+    sales=Sales_Receipt.objects.all().count()
+
+    for account in Account.objects.all():
+        print(account.customer == None)
+        if account.customer != None :
+            initial_transaction=Transaction.objects.filter(description="Initial transaction opening balance",transaction_type='Sales').aggregate(total=Sum('amount'))['total'] or 0
+            print(initial_transaction)
+    salereceipts = Sales_Receipt.objects.all()
+    monthly_sales = {}
+    salereceipt_items_pro = {}
+    total_amount = {}
+
+    # ✅ Monthly totals using TruncMonth
+    monthly_data = (
+        Sales_Receipt_Product.objects
+        .values('salereceipt__date_created')  # assuming Sales_Receipt has a 'date' field
+        .annotate(month=TruncMonth('salereceipt__date_created'))
+        .values('month')
+        .annotate(total=Sum('amount'))
+        .order_by('month')
+    )
+
+    # Per receipt totals
+    for x in salereceipts:
+        salereceipt_items_pro[x.id] = Sales_Receipt_Product.objects.filter(salereceipt=x).count()
+        salereceipt_products = Sales_Receipt_Product.objects.filter(salereceipt=x)
+        total_amount[x.id] = salereceipt_products.aggregate(Sum('amount'))
+
+    total_sale = sum(item['amount__sum'] or 0 for item in total_amount.values())
+
+
+    # Convert to dict with month names
+    for entry in monthly_data:
+        month_name = DateFormat(entry['month']).format('M-Y')  # e.g. Jan, Feb
+        monthly_sales[month_name] = entry['total']
+        labels = list(monthly_sales.keys())
+        values = list(monthly_sales.values())
+
+    # print(monthly_sales,labels,values)
+
+
     # Check if the user has the required permission
     if not request.user.has_perm('home.view_dashboard'):
         # Custom redirect logic for users without permission
         if request.user.is_superuser:
+            return redirect('/')
+        elif request.user.groups.filter(name='checker').exists():
             return redirect('/')
         elif request.user.groups.filter(name='author').exists():
             return redirect('/dashboard/')
@@ -35,11 +85,21 @@ def index(request):
             return redirect("/list-store-issue-request/")
         else:
             raise PermissionDenied  # Show 403 Forbidden page
+
+    chart_data = {
+        "labels": labels,
+        "values": values
+    }
+
     data={'users':users,
           'employees':employees,
           'customers':customers,
           'suppliers':suppliers,
-          'accounts':accounts}
+          'accounts':accounts,
+          'items':items,
+          'sales':sales,
+          'total_sale':float(total_sale)+float(initial_transaction),
+          "chart_data_json": json.dumps(chart_data)}
     return render(request, 'index.html',data)
 
 @login_required

@@ -950,17 +950,18 @@ class Cheque_AccountForm(forms.ModelForm):
 
 
 class TransactionForm(forms.ModelForm):
-
-    
+    amount=forms.fields.IntegerField(min_value=0,label="Amount")
     class Meta:
         model = Transaction
-        fields = ['description', 'debit_account','credit_account','amount','date']
+        fields = ['description', 'debit_account','credit_account','amount','date','transaction_type']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
+        choices = [(value, label) for value, label in self.fields['transaction_type'].choices if value != '']
+        self.fields['transaction_type'].choices = [('', 'Select')] + choices
         self.fields['debit_account'].empty_label = "Select"
         self.fields['credit_account'].empty_label = "Select"
         self.fields['debit_account'].queryset = Account.objects.filter(is_deleted=False)
@@ -971,8 +972,6 @@ class TransactionForm(forms.ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than zero.")
         return amount
-
-
 
 class AccountStatementForm(forms.Form):
     account = forms.ModelChoiceField(

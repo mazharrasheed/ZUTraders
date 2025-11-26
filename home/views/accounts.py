@@ -137,6 +137,7 @@ def add_transaction(request):
         if form.is_valid():
             transaction=form.save(commit=False)
             transaction.made_by=request.user
+            transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
             return redirect('transaction')
     else:
@@ -206,6 +207,7 @@ def edit_transaction(request,id):
         if form.is_valid():
             transaction=form.save(commit=False)
             transaction.made_by=request.user
+            transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
             messages.success(request,"Transaction Updated successfully !!")
             return redirect('transaction')

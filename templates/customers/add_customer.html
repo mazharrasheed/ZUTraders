@@ -29,8 +29,8 @@ Add Customer {% endblock title %}
          <div class="row mt-5">
                     {% for field in form %}
                     <div class="col-md-3 mb-5">
-                      {{ field.label_tag }}
-                      {{ field }}
+                      <!-- {{ field.label_tag }} -->
+                      {{ field|as_crispy_field }}
                       {% if field.errors %}
                       <div class="text-danger">{{ field.errors }}</div>
                       {% endif %}
