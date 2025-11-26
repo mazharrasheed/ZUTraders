@@ -98,11 +98,8 @@ def index(request):
           'accounts':accounts,
           'items':items,
           'sales':sales,
-<<<<<<< HEAD
           'crunt_sale':total_sale,
           'initial_sale':float(initial_transaction),
-=======
->>>>>>> 8d33d8e (update with local repo)
           'total_sale':float(total_sale)+float(initial_transaction),
           "chart_data_json": json.dumps(chart_data)}
     return render(request, 'index.html',data)
