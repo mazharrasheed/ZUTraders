@@ -110,7 +110,7 @@ def detail(request,id):
 
 @login_required
 @permission_required('home.change_blog',login_url='/login/')
-def edit_data(request,id): 
+def edit_data(request,id):
   data={}
   if request.method=='POST':
       pst=Blog.objects.get(id=id)
@@ -156,7 +156,7 @@ def delete_data(request,id):
 @login_required
 @permission_required('home.add_blog',login_url='/login/')
 def post_blog(request):
-  
+
   if request.method=='POST':
     form=Add_Blog(request.POST)
     title=request.POST['title']
@@ -170,11 +170,11 @@ def post_blog(request):
     form=Add_Blog()
   data={'form':form}
   return render(request,'postblog.html',data)
-  
+
 @login_required
 @permission_required('home.view_blog',login_url='/login/')
 def dashboard(request):
-  
+
   if request.user.is_superuser==True:
     myblog=Blog.objects.all()
     data={'myblog':myblog}
@@ -255,7 +255,7 @@ def sign_in(request):
 @login_required
 # @permission_required('auth.change_user',login_url='/login/')
 def editprofile(request,id):
- 
+
   if request.method=="POST":
     if request.user.is_superuser==True:
       form=AdminUserPrifoleForm(request.POST,instance=request.user)
@@ -269,10 +269,10 @@ def editprofile(request,id):
       messages.success(request,"Your Profile Update Successfully")
       form.save()
       return redirect('dashboard')
-  else: 
+  else:
     if request.user.is_superuser==True:
       form=AdminUserPrifoleForm(instance=request.user)
-    else: 
+    else:
       form=EditUserPrifoleForm(instance=request.user)
     data={'form':form}
     return render(request,"editprofile.html",data)
