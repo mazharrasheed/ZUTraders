@@ -56,6 +56,7 @@ def list_sales(request):
         salereceipts = Sales_Receipt.objects.all()
     for x in salereceipts:
         # Count the number of products for each sale receipt
+        print(x.transaction_ref)
         salereceipt_items_pro[x.id] = Sales_Receipt_Product.objects.filter(salereceipt=x).count()
         # Get products for the sale receipt and aggregate the amount
         salereceipt_products = Sales_Receipt_Product.objects.filter(salereceipt=x)
@@ -415,7 +416,7 @@ def make_transaction1(request,id):
     amt=total_amount[id]
     print(amt)
     amount=amt['amount__sum']
-    transaction=Transaction(description=f' sales receipt id = {salereceipt.id}',debit_account=debit_account,credit_account=credit_account,amount=amount)
+    transaction=Transaction(description=f' sales receipt id = {salereceipt.id}',debit_account=debit_account,credit_account=credit_account,amount=amount,date=salereceipt.date_created)
     transaction.made_by=request.user
     transaction.save()
     salereceipt.make_transaction=True
@@ -461,12 +462,15 @@ def make_transaction(request, id):
             debit_account=debit_account,
             credit_account=credit_account,
             amount=amount,
+            date=salereceipt.date_created,
+            transaction_type="Sales",
             transaction_ref="TRX"+str(salereceipt.id)+str(datetime.now().strftime("%Y%m%d%H%M%S")),
             made_by=request.user
         )
         transaction.save()
 
         salereceipt.make_transaction = True
+        salereceipt.transaction_ref = transaction.transaction_ref
         salereceipt.save()
 
         # Return JSON response for AJAX
