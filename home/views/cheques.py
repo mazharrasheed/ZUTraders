@@ -15,21 +15,43 @@ from django.utils import timezone
 def cheque(request):
     cheques=Cheque.objects.filter(is_deleted=False)
     for cheque in cheques:
-        if cheque.cheque_date:  
-            cheque_late = date.today() >= cheque.cheque_date
+        if cheque.is_cleared: 
+            cheque.highlight_red = False    
+        else:
+            cheque_late = date.today() >= cheque.cheque_duedate
             print(date.today(),cheque_late)
-            if cheque_late :
+            print("fgfdgf",cheque.is_cleared)
+            if cheque_late and cheque.is_cleared == False: 
                 cheque.highlight_red= True
                 print(cheque.highlight_red,'33333')
             else:
                 cheque.highlight_red= False
                 print(cheque.highlight_red,'2222')
-        else:
-            cheque.highlight_red = False
 
         print(cheque.highlight_red)
     data={'cheques':cheques}
     return render(request,"cheques/cheque_home.html",data)   
+
+@login_required
+@permission_required('home.view_cheque', login_url='/login/')
+def clear_cheque(request,id):
+    # cheque=Cheque.objects.get(is_deleted=False,id=id)
+    # cheque.is_cleared=True
+    # cheque.cleared_date=timezone.now()
+    # cheque.save()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.method == 'POST':
+        cheque=Cheque.objects.get(id=id)
+        cheque.is_cleared=True
+        cheque.save()
+        return JsonResponse({'success': True, 'message': 'Cheque Cleared successfully!'})
+    else:
+        cheque=Cheque.objects.get(id=id)
+        cheque.is_cleared=True
+        cheque.save()
+        messages.success(request,"Cheque Cleared successfully !!")
+        return redirect('cheques')
+    # return render(request,"cheques/cheque_home.html")   
 
 @login_required
 @permission_required('home.add_cheque', login_url='/login/')

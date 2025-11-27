@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 from datetime import datetime
+import datetime
+from django.utils import timezone
 from autoslug import AutoSlugField
 from django.utils.text import slugify
 from django.db.models import Sum
+from decimal import Decimal
 # Create your models here.
 
 class Blog(models.Model):
@@ -473,16 +476,50 @@ class Suppliers(models.Model):
         return self.coname
 
 class Cheque(models.Model):
-    customer=models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    cheque_number=models.CharField(max_length=20,null=True,blank=True)
-    cheque_amount=models.CharField(max_length=20,null=True,blank=True)
-    cheque_date=models.DateField()
-    bank_name=models.CharField(max_length=50,null=True,blank=True)
-    status=models.BooleanField(default=False)
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
+    cheque_number = models.CharField(max_length=20, null=True, blank=True)
+    cheque_amount = models.DecimalField(max_digits=20, decimal_places=2 ,default=0)
+    cheque_duedate = models.DateField()
+    cleared_date = models.DateField(null=True, blank=True)
+    bank_name = models.CharField(max_length=50, null=True, blank=True)
+    is_cleared = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
+    remaining_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        # First time creation: set remaining_amount = cheque_amount
+        if not self.pk:
+            self.remaining_amount = self.cheque_amount
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.customer} {self.cheque_number}"
-        # return f"{self.customer} {self.cheque_number}".capitalize()
+
+    def apply_payment(self, diff_amount):
+        """
+        diff_amount = positive → payment added
+        diff_amount = negative → payment reduced (transaction edited)
+        """
+
+        # Ensure Decimal
+        diff_amount = Decimal(diff_amount)
+
+        # Subtract diff from remaining
+        self.remaining_amount -= diff_amount
+
+        # Prevent negative
+        if self.remaining_amount < 0:
+            self.remaining_amount = Decimal("0")
+
+        # Auto clear logic
+        if self.remaining_amount == 0:
+            self.is_cleared = True
+            self.cleared_date = datetime.date.today()
+        else:
+            self.is_cleared = False
+            self.cleared_date = None
+
+        self.save()
 
 class Product_Price(models.Model):
     product = models.ForeignKey(Final_Product, on_delete=models.RESTRICT, related_name='product_price')
@@ -531,7 +568,8 @@ class Account(models.Model):
     address=models.CharField(max_length=255,null=True,blank=True)
     contact=models.CharField(max_length=12,null=True,unique=True,blank=True)
     mobile=models.CharField(max_length=12,null=True , blank=True,unique=True)
-    date = models.DateTimeField(default=datetime.now())
+    # date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField()
     active=models.BooleanField(default=True)
     is_deleted=models.BooleanField(default=False)
     def __str__(self):
@@ -551,6 +589,8 @@ class Transaction(models.Model):
     CASHPAYED = 'Cash Payed'
     SALES = 'Sales'
     TRANSFER = 'Account to Account'
+    COMMITMENT="Commitment"
+    COMMITMENTRECIEVED="Commitment Received"
    
 
     TRNSACTION_TYPE_CHOICES = [
@@ -558,13 +598,15 @@ class Transaction(models.Model):
         (CASHPAYED, 'Cash Recieved'),
         (SALES, 'Sales'),
         (TRANSFER, 'Account to Account'),
+        (COMMITMENT,"Commitment"),
+        (COMMITMENTRECIEVED,"Commitment Received"),
         
     ]
 
 
     transaction_ref=models.CharField(max_length=100,null=True,blank=True)
     transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRNSACTION_TYPE_CHOICES)
-    description = models.TextField()
+    description = models.TextField(null=True,blank=True)
     date = models.DateTimeField()
     debit_account = models.ForeignKey(Account, related_name='debit_transactions', on_delete=models.RESTRICT)
     credit_account = models.ForeignKey(Account, related_name='credit_transactions', on_delete=models.RESTRICT)

@@ -836,16 +836,17 @@ class Cheques_form(forms.ModelForm):
     customer = forms.ModelChoiceField(queryset=Customer.objects.filter(is_deleted=False), empty_label="Select Customer")
     class Meta:
         model = Cheque
-        fields = ['customer', 'cheque_number','cheque_amount','cheque_date','bank_name']
-        labels={'customer':'Customer Name','cheuqe_Number':'Cheque Number','cheque_date':'Cheque Date','bank_name':'Bank Name/Party Name'
+        fields = ['customer', 'cheque_number','cheque_amount','cheque_duedate','bank_name']
+        labels={'customer':'Customer Name','cheuqe_Number':'Cheque Number','cheque_duedate':'Cheque Due Date','bank_name':'Bank Name/Party Name'
             }
         widgets = {
-            'cheque_date': forms.DateInput(attrs={'type': 'date'}),
+            'cheque_duedate': forms.DateInput(attrs={'type': 'date','class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(Cheques_form, self).__init__(*args, **kwargs)
         self.fields['cheque_number'].required = False
+        self.fields['cheque_amount'].required = True
         self.fields['bank_name'].required = False
         placeholders = {
             'cheque_number': 'Enter cheque number',
@@ -861,8 +862,11 @@ class AccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        fields = ['name','account_type','address','contact','mobile']
+        fields = ['name','account_type','address','contact','mobile','date']
         labels={'contact':'Contact #','mobile':'Mobile #'}
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(AccountForm, self).__init__(*args, **kwargs)
@@ -934,7 +938,11 @@ class Cheque_AccountForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        fields = ['cheque','balance','account_type']
+        fields = ['cheque','account_type','date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
 
     def __init__(self, *args, **kwargs):
         super(Cheque_AccountForm, self).__init__(*args, **kwargs)
@@ -966,6 +974,7 @@ class TransactionForm(forms.ModelForm):
         self.fields['credit_account'].empty_label = "Select"
         self.fields['debit_account'].queryset = Account.objects.filter(is_deleted=False)
         self.fields['credit_account'].queryset = Account.objects.filter(is_deleted=False)
+        self.fields['description'].required=True
 
     def clean_amount(self):
         amount = self.cleaned_data['amount']

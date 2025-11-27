@@ -120,6 +120,7 @@ urlpatterns = [
     path('cheques/', cheques.cheque , name="cheques"),
     path('add_cheque/', cheques.add_cheque , name="addcheque"),
     path('cheque/<int:id>', cheques.edit_cheque , name="editcheque"),
+    path('clear_cheque/<int:id>', cheques.clear_cheque , name="clearcheque"),
     path('deletecheque/<int:id>', cheques.delete_cheque , name="deletecheque"),
 
 # Gatepass

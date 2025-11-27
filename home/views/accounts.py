@@ -44,6 +44,12 @@ def add_account(request):
             elif account_type=="cheque":
                 mydata = Account.objects.filter(is_deleted=False,cheque__isnull=False).order_by("-id")
                 form = Cheque_AccountForm(request.POST)
+                if form.is_valid():
+                    form.save(commit=False)
+                    cheque=form.cleaned_data.get('cheque')
+                    print(cheque.cheque_amount,'4444')
+                    messages.success(request,"Accounts Added Succesfuly !!")
+                    return redirect('createaccounts')
             else:
                 form = AccountForm(request.POST)
             if form.is_valid():
@@ -87,6 +93,16 @@ def edit_account(request,id):
             form = Supplier_AccountForm(request.POST,instance=mydata)
         elif mydata.cheque:
             form = Cheque_AccountForm(request.POST,instance=mydata)
+            if form.is_valid():
+                    account=form.save(commit=False)
+                    cheque=form.cleaned_data.get('cheque')
+                    print(cheque.cheque_amount,'66666')
+                    account.balance=cheque.cheque_amount
+                    account.save()
+                    print(account.balance,'7777')
+
+                    messages.success(request,"Accounts Added Succesfuly !!")
+                    return redirect('createaccounts')
         else:
             form = AccountForm(request.POST,instance=mydata)
         if form.is_valid():
@@ -237,7 +253,9 @@ def account_report(request,id):
         revenue_account = {}
         credit_balance=0
         debit_balance=0
+        
         account = get_object_or_404(Account, pk=id)
+        balance=account.balance
         debit_transactions = account.debit_transactions.all()
         credit_transactions = account.credit_transactions.all()
         # transactions = account.debit_transactions.all().union(account.credit_transactions.all()).order_by('date')
@@ -249,23 +267,23 @@ def account_report(request,id):
         for transaction in credit_transactions:
             credit_balance += transaction.amount
         if account.account_type=='Asset' :
-            balance=int(debit_balance)-int(credit_balance)
+            balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type=='Expense' :
-            balance=int(debit_balance)-int(credit_balance)
+            balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type== 'Revenue':
-            balance=int(credit_balance)-int(debit_balance)
+            balance+=int(credit_balance)-int(debit_balance)
         elif account.account_type=='Liability' :
-            balance=int(credit_balance)-int(debit_balance)
+            balance+=int(credit_balance)-int(debit_balance)
         elif account.account_type=='Equity' :
-            balance=int(credit_balance)-int(debit_balance)
+            balance+=int(credit_balance)-int(debit_balance)
         elif account.account_type=='Gain' :
-            balance=int(debit_balance)-int(credit_balance)
+            balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type=='Loss' :
-            balance=int(credit_balance)-int(debit_balance)
+            balance+=int(credit_balance)-int(debit_balance)
         elif account.account_type=='Commitment' :
-            balance=(debit_balance)-int(credit_balance)
+            balance+=(debit_balance)-int(credit_balance)
         elif account.account_type=='Commitment_Received' :
-            balance=int(credit_balance)-int(debit_balance)
+            balance+=int(credit_balance)-int(debit_balance)
 
         return render(request, 'accounts/account_report.html', {'account': account,
         'debit_transactions': debit_transactions,

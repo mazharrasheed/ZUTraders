@@ -56,7 +56,7 @@ Add Cheque {% endblock title %}
             <td>Customer Name</td>
             <td>Cheque Number</td>
             <td>Cheque Amount</td>
-            <td>Cheque Date</td>
+            <td>Cheque Due Date</td>
             <td>Bank Name</td>
             <td>Status</td>
            
@@ -72,9 +72,9 @@ Add Cheque {% endblock title %}
             <td class="text-center">{{mydata.customer}}</td>
             <td class="text-center">{{mydata.cheque_number}}</td>
             <td class="text-center">{{mydata.cheque_amount}}</td>
-            <td class="text-center">{{mydata.cheque_date}}</td>
+            <td class="text-center">{{mydata.cheque_duedate}}</td>
             <td class="text-center">{{mydata.bank_name}}</td>
-            <td class="text-center">{% if data.status %} Cleared {% else %} Pendding {% endif %}</td>
+            <td class="text-center">{% if mydata.is_cleared %} Cleared {% else %} Pendding {% endif %}</td>
 
           </tr>
           {% else %}
@@ -85,12 +85,16 @@ Add Cheque {% endblock title %}
             <td class="text-center">{{data.customer}}</td>
             <td class="text-center">{{data.cheque_number}}</td>
             <td class="text-center">{{data.cheque_amount}}</td>
-            <td class="text-center">{{data.cheque_date}}</td>
+            <td class="text-center">{{data.cheque_duedate}}</td>
             <td class="text-center">{{data.bank_name}}</td>
-            <td class="text-center">{% if data.status %} Cleared {% else %} Pendding {% endif %}</td>
+            <td class="text-center">{% if data.is_cleared %} Cleared {% else %} Pendding {% endif %}</td>
             <td  class="text-center">
+              {% if not data.is_cleared %}
               <a class="btn btn-sm btn-warning" href={% url 'editcheque' id=data.id %}>Edit</a>
               <a class=" btn btn-sm btn-danger" href={% url 'deletecheque' id=data.id %}>Delete</a> 
+              {% else %}
+              No Actions
+              {% endif %}
             </td>
           </tr>
           {% endfor %} 
