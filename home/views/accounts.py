@@ -9,8 +9,6 @@ from django.utils import timezone
 
 # Create your views here.
 
-
-
 @login_required
 @permission_required('home.view_account', login_url='/login/')
 def accounts(request):
@@ -82,7 +80,6 @@ def edit_account(request,id):
 
     mydata=Account.objects.get(id=id)
     data={}
-
     if request.method == 'POST':
         mydata=Account.objects.get(id=id)
         if mydata.employee=="employee":
@@ -96,11 +93,8 @@ def edit_account(request,id):
             if form.is_valid():
                     account=form.save(commit=False)
                     cheque=form.cleaned_data.get('cheque')
-                    print(cheque.cheque_amount,'66666')
                     account.balance=cheque.cheque_amount
                     account.save()
-                    print(account.balance,'7777')
-
                     messages.success(request,"Accounts Added Succesfuly !!")
                     return redirect('createaccounts')
         else:
@@ -140,7 +134,7 @@ def delete_account(request,id):
 @permission_required('home.view_transaction', login_url='/login/')
 def list_transaction(request):
 
-    transactions = Transaction.objects.all()
+    transactions = Transaction.objects.filter(is_deleted=False)
     return render(request, 'accounts/transactions_list.html', {'mydata': transactions})
 
 @login_required
@@ -155,6 +149,13 @@ def add_transaction(request):
             transaction.made_by=request.user
             transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
+            # If this transaction is linked to a cheque, update cheque
+            if transaction.credit_account.cheque_id:
+                cheque = transaction.credit_account.cheque
+                cheque.receive_payment(transaction.amount, request.user,ref=transaction.transaction_ref)
+            # elif transaction.credit_account.cheque_id:
+            #     cheque = transaction.credit_account.cheque
+            #     cheque.receive_payment(transaction.amount, request.user,ref=transaction.transaction_ref)
             return redirect('transaction')
     else:
         form = TransactionForm()
@@ -218,29 +219,42 @@ def add_transaction(request):
 def edit_transaction(request,id):
     
     if request.method=="POST":
+        
         transaction = Transaction.objects.get(id=id)
         form = TransactionForm(request.POST,instance=transaction)
         if form.is_valid():
             transaction=form.save(commit=False)
             transaction.made_by=request.user
-            transaction.transaction_ref="TRX"+str(transaction.id)+str(datetime.now().strftime("%Y%m%d%H%M%S"))
             transaction.save()
-            messages.success(request,"Transaction Updated successfully !!")
+            # If this transaction is linked to a cheque, and have Auto trasaction to customer account update Transaction
+            if transaction.credit_account.cheque_id:
+                print("dsfdsfdsf")
+                auto_trx = Transaction.objects.filter(transaction_ref=transaction.transaction_ref,auto=True).exclude(id=id).update(
+                    amount=transaction.amount,
+                    date=timezone.now(),
+                    made_by=request.user
+                )
+            messages.success(request,"Transaction Updated Successfully !!")
             return redirect('transaction')
     else:
         transaction = Transaction.objects.get(id=id)
+        if transaction.credit_account.cheque_id:
+            transactions = Transaction.objects.filter(transaction_ref=transaction.transaction_ref).exclude(id=id)
+            print(transactions,'5555')
         form = TransactionForm(instance=transaction)
 
     return render(request, 'accounts/add_transaction.html', {'form': form,'mydata': transaction, 'update':True})
 
-
 @login_required
 @permission_required('home.delete_transaction', login_url='/login/')
 def delete_transaction(request,id):
-    transaction = Transaction.objects.filter(id=id)
-    transaction.delete()
-    # transaction.save()
-    return redirect('transaction')
+    transaction = Transaction.objects.get(id=id)
+    if transaction.credit_account.cheque_id:
+        auto_trx = Transaction.objects.filter(transaction_ref=transaction.transaction_ref,auto=True).exclude(id=id).update(is_deleted=True)
+    print('delete transaction called')
+    transaction.is_deleted=True
+    transaction.save()
+    return redirect('listtransactions')
     pass
 
 # views.py
@@ -254,18 +268,23 @@ def account_report(request,id):
         credit_balance=0
         debit_balance=0
         
-        account = get_object_or_404(Account, pk=id)
+        account = get_object_or_404(Account, pk=id,is_deleted=False)
         balance=account.balance
-        debit_transactions = account.debit_transactions.all()
-        credit_transactions = account.credit_transactions.all()
+        debit_transactions = account.debit_transactions.filter(is_deleted=False)
+        credit_transactions = account.credit_transactions.filter(is_deleted=False)
         # transactions = account.debit_transactions.all().union(account.credit_transactions.all()).order_by('date')
-        transactions = Transaction.objects.filter(Q(debit_account=account) | Q(credit_account=account)).order_by('date')
-        # print(transactions)
+        # transactions = Transaction.objects.filter(Q(debit_account=account) | Q(credit_account=account)).order_by('date').count()
+        transactions = Transaction.objects.filter(
+    Q(is_deleted=False) & (Q(debit_account=account) | Q(credit_account=account))
+).order_by('date')
+        print(transactions)
 
         for transaction in debit_transactions:
             debit_balance += transaction.amount  
+            print(debit_balance,'7777')
         for transaction in credit_transactions:
             credit_balance += transaction.amount
+            print(credit_balance,'8888')
         if account.account_type=='Asset' :
             balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type=='Expense' :
@@ -323,8 +342,8 @@ def balance_sheet(request):
     for account in accounts:
         balance = account.balance  # Use the balance field as the initial balance
         # Get all transactions where the account is either debited or credited
-        debit_transactions = Transaction.objects.filter(debit_account=account)
-        credit_transactions = Transaction.objects.filter(credit_account=account)          
+        debit_transactions = Transaction.objects.filter(is_deleted=False,debit_account=account)
+        credit_transactions = Transaction.objects.filter(is_deleted=False,credit_account=account)          
         if account.customer !=None:
             ct=account.customer
             for tr in debit_transactions:

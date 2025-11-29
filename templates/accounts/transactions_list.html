@@ -60,14 +60,24 @@ Transaction_List {% endblock title %}
                 <td class="text-center fs-5">{{data.debit_account|title}} <br>
                 {{data.credit_account|title}}</td>
                 <td class="text-center fs-5">{{data.amount}}</a></td>
-                <td class="text-center fs-5"><br>{{data.amount}}</a></td>
-    
-                {% if perms.home.change_transaction %}
-                <td  class="text-center fs-5"><a class="btn btn-sm btn-warning" href={% url 'edittransaction' id=data.id %}>Edit</a>
+                <td class="text-center fs-5"><br>{{data.amount}} </a></td>
+                
+            
+                <td  class="text-center fs-5">
+                  {% if not data.auto  %}
+
+                  {% if perms.home.change_transaction %}
+                  <a class="btn btn-sm btn-warning" href={% url 'edittransaction' id=data.id %}>Edit</a>
                   {% endif %}
+
                   {% if perms.home.delete_transaction %}
-                  <a class=" btn btn-sm btn-danger" href={% url 'deletetransaction' id=data.id %}>Delete</a>
+                  <a class=" btn btn-sm btn-danger" href={% url 'deletetransaction' id=data.id %}  onclick="return confirm('Are you sure you want to delete this transaction?');" >Delete</a>
                   {% endif %}
+
+                  {% else %}
+                    Auto
+                  {% endif %}
+
                 </td>
             </tr>
             {% endfor %}

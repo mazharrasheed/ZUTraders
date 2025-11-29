@@ -53,7 +53,6 @@ def before_transaction_saved(sender, instance, **kwargs):
     else:
         instance._old_amount = Decimal("0")
 
-
 @receiver(post_save, sender=Transaction)
 def after_transaction_saved(sender, instance, created, **kwargs):
 

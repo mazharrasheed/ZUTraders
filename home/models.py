@@ -474,6 +474,9 @@ class Suppliers(models.Model):
 
     def __str__(self):
         return self.coname
+    
+
+
 
 class Cheque(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
@@ -500,17 +503,13 @@ class Cheque(models.Model):
         diff_amount = positive → payment added
         diff_amount = negative → payment reduced (transaction edited)
         """
-
         # Ensure Decimal
         diff_amount = Decimal(diff_amount)
-
         # Subtract diff from remaining
         self.remaining_amount -= diff_amount
-
         # Prevent negative
         if self.remaining_amount < 0:
             self.remaining_amount = Decimal("0")
-
         # Auto clear logic
         if self.remaining_amount == 0:
             self.is_cleared = True
@@ -518,23 +517,38 @@ class Cheque(models.Model):
         else:
             self.is_cleared = False
             self.cleared_date = None
-
         self.save()
 
-class Product_Price(models.Model):
-    product = models.ForeignKey(Final_Product, on_delete=models.RESTRICT, related_name='product_price')
-    region = models.ForeignKey(Region, on_delete=models.RESTRICT,null=True ,blank=True)
-    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
-    price = models.FloatField()
-    is_deleted=models.BooleanField(default=False)
+    def receive_payment(self, amount, user,ref):
+        debit_account = Account.objects.get(name='received against cheques')
+        credit_account = Account.objects.filter(customer=self.customer).first()
 
-    class Meta:
-        unique_together = ('product', 'customer')  # Ensure each customer has one price per product
+        if not debit_account or not credit_account:
+            return False
+
+        description = (
+            f"Amount received against Cheque #{self.cheque_number} "
+            f"(Due: {self.cheque_duedate}), "
+            f"Customer: {self.customer}"
+        )
+        t = Transaction.objects.create(
+                transaction_type=Transaction.COMMITMENTRECIEVED,
+                description=description,
+                date=timezone.now(),
+                debit_account=debit_account,
+                credit_account=credit_account,
+                amount=amount,
+                made_by=user,
+                auto=True,
+                transaction_ref=ref
+            )
+        self.save()
+            
+        return True
 
 
 
-    class Meta:
-        unique_together = ('product', 'customer')  # Ensure each customer has one price per product
+
 
 class Account(models.Model):
     ASSET = 'Asset'
@@ -585,33 +599,33 @@ class Account(models.Model):
 
 class Transaction(models.Model):
 
+
     CASHRECEIVED = 'Cash Received'
     CASHPAYED = 'Cash Payed'
     SALES = 'Sales'
     TRANSFER = 'Account to Account'
-    COMMITMENT="Commitment"
-    COMMITMENTRECIEVED="Commitment Received"
-   
+    COMMITMENT = "Commitment"
+    COMMITMENTRECIEVED = "Commitment Received"
 
-    TRNSACTION_TYPE_CHOICES = [
-        (CASHRECEIVED, 'Cash Payed'),
-        (CASHPAYED, 'Cash Recieved'),
+    TRANSACTION_TYPE_CHOICES = [
+        (CASHRECEIVED, 'Cash Received'),
+        (CASHPAYED, 'Cash Payed'),
         (SALES, 'Sales'),
         (TRANSFER, 'Account to Account'),
-        (COMMITMENT,"Commitment"),
-        (COMMITMENTRECIEVED,"Commitment Received"),
-        
+        (COMMITMENT, "Commitment"),
+        (COMMITMENTRECIEVED, "Commitment Received"),
     ]
 
 
     transaction_ref=models.CharField(max_length=100,null=True,blank=True)
-    transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRNSACTION_TYPE_CHOICES)
+    transaction_type=models.CharField(max_length=100,null=True,blank=True,choices=TRANSACTION_TYPE_CHOICES)
     description = models.TextField(null=True,blank=True)
     date = models.DateTimeField()
     debit_account = models.ForeignKey(Account, related_name='debit_transactions', on_delete=models.RESTRICT)
     credit_account = models.ForeignKey(Account, related_name='credit_transactions', on_delete=models.RESTRICT)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     is_deleted=models.BooleanField(default=False)
+    auto=models.BooleanField(default=False)
     made_by=models.ForeignKey(User,on_delete=models.RESTRICT)
     def __str__(self):
         return f"{self.date} - {self.description}"
@@ -622,6 +636,22 @@ class Transaction(models.Model):
             models.Index(fields=['credit_account']),
             models.Index(fields=['date']),
         ]
+
+
+class Product_Price(models.Model):
+    product = models.ForeignKey(Final_Product, on_delete=models.RESTRICT, related_name='product_price')
+    region = models.ForeignKey(Region, on_delete=models.RESTRICT,null=True ,blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.RESTRICT)
+    price = models.FloatField()
+    is_deleted=models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('product', 'customer')  # Ensure each customer has one price per product
+
+
+
+    class Meta:
+        unique_together = ('product', 'customer')  # Ensure each customer has one price per product
 
 
 class UnderConstruction(models.Model):
