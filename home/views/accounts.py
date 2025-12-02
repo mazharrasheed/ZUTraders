@@ -26,7 +26,6 @@ def create_accounts(request):
 @login_required
 @permission_required('home.add_account', login_url='/login/')
 def add_account(request):
-
     account_type=(request.GET.get('account_type'))
     if request.method == 'POST':
             mydata = Account.objects.filter(is_deleted=False).order_by("-id")
@@ -43,9 +42,11 @@ def add_account(request):
                 mydata = Account.objects.filter(is_deleted=False,cheque__isnull=False).order_by("-id")
                 form = Cheque_AccountForm(request.POST)
                 if form.is_valid():
-                    form.save(commit=False)
+                    account=form.save(commit=False)
                     cheque=form.cleaned_data.get('cheque')
                     print(cheque.cheque_amount,'4444')
+                    account.balance=cheque.cheque_amount
+                    account.save()
                     messages.success(request,"Accounts Added Succesfuly !!")
                     return redirect('createaccounts')
             else:
@@ -77,7 +78,6 @@ def add_account(request):
 @login_required
 @permission_required('home.change_account', login_url='/login/')
 def edit_account(request,id):
-
     mydata=Account.objects.get(id=id)
     data={}
     if request.method == 'POST':
