@@ -304,7 +304,7 @@ def edit_cash_salereceipt(request,id):
 
                 try:
                     product_id, quantity,unit_price,amount = product_info.split(':')
-                    product_instance = Product.objects.get(id=product_id)
+                    product_instance = Final_Product.objects.get(id=product_id)
                     print("product id :",product_id, "qty:",total_quantity,unit_price,amount)
                     product, created = Sales_Receipt_Product.objects.update_or_create(
                         salereceipt=salercpt,
