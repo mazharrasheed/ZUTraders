@@ -287,6 +287,8 @@ def account_report(request,id):
             print(credit_balance,'8888')
         if account.account_type=='Asset' :
             balance+=int(debit_balance)-int(credit_balance)
+        elif account.account_type=='Asset Receiveable' :
+            balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type=='Expense' :
             balance+=int(debit_balance)-int(credit_balance)
         elif account.account_type== 'Revenue':
@@ -320,6 +322,7 @@ def account_report(request,id):
 def balance_sheet(request):
     accounts = Account.objects.filter(is_deleted=False)
     assets = {}
+    asset_receiveable = {}
     liabilities = {}
     equity_account = {}
     revenue_account = {}
@@ -331,6 +334,7 @@ def balance_sheet(request):
 
     liabilitie = 0
     asset=0
+    asset_receiveable=0
     equity = 0
     revenue = 0
     expenses = 0
@@ -362,6 +366,9 @@ def balance_sheet(request):
         
             if account.account_type == 'Asset' :
                 asset+=balance
+                assets[account] = balance
+            elif account.account_type == 'Asset Receiveable' :
+                asset_receiveable+=balance
                 assets[account] = balance
             elif account.account_type == 'Liability':
                 liabilitie-=balance
@@ -403,6 +410,7 @@ def balance_sheet(request):
     net_profit=revenue-expenses
 
     mydata={'assets': assets,
+    'asset_receiveable':asset_receiveable,
     'liabilities': liabilities, 
     'revenue_account':revenue_account,
     'equity_account':equity_account,

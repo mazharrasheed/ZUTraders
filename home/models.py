@@ -552,6 +552,7 @@ class Cheque(models.Model):
 
 class Account(models.Model):
     ASSET = 'Asset'
+    ASSETRECEIVEABLE = 'Asset Receiveable'
     LIABILITY = 'Liability'
     EQUITY = 'Equity'
     REVENUE = 'Revenue'
@@ -563,6 +564,7 @@ class Account(models.Model):
 
     ACCOUNT_TYPE_CHOICES = [
         (ASSET, 'Asset'),
+        (ASSETRECEIVEABLE , 'Asset Receiveable'),
         (LIABILITY, 'Liability'),
         (EQUITY, 'Equity'),
         (REVENUE, 'Revenue'),
