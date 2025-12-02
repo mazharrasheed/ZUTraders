@@ -48,7 +48,7 @@ def add_account(request):
                     account.balance=cheque.cheque_amount
                     account.save()
                     messages.success(request,"Accounts Added Succesfuly !!")
-                    return redirect('createaccounts')
+                    return redirect('/add_account/?account_type=cheque')
             else:
                 form = AccountForm(request.POST)
             if form.is_valid():
