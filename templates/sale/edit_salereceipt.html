@@ -143,6 +143,8 @@ Edit Customer Slae Receipt
 <script>
 $(document).ready(function () {
   let productList = [];
+  let price=0;
+
 
   // preload existing products
   {% for sp in salereceipt.sales_receipt_products.all %}
@@ -163,6 +165,7 @@ $(document).ready(function () {
       success: function (data) {
         $("#in_stock").text(data.success ? data.stock : "N/A");
         $("#price").text(data.success ? data.price : "N/A");
+        price=data.success ? data.price : "N/A";
       }
     });
   });
@@ -188,8 +191,8 @@ $(document).ready(function () {
       <td>${productText}</td>
       <td>-</td>
       <td>${quantity}</td>
-      <td>Auto</td>
-      <td>Auto</td>
+      <td>${price}</td>
+      <td>${price*quantity}</td>
       <td><button type="button" class="delete-product btn btn-danger" data-id="${product}">Delete</button></td>
     </tr>`;
     $("#product-list").append(row);
