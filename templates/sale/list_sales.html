@@ -106,10 +106,12 @@ Sales-List
                           {% if customer %}
 
                           {% if perms.home.add_transaction %}
+                          
 
                           {% if salereceipt.make_transaction %}
                           
                             Ref: {{ salereceipt.transaction_ref }}
+                            
                      
                           {% else %}
                           <button class="btn btn-info transaction-btn" data-id="{{ salereceipt.id }}"
@@ -121,9 +123,15 @@ Sales-List
                           {% endif %}
 
                           {% else %}
+                          
 
                          {% if salereceipt.transaction_ref  %}
                            Ref:{{salereceipt.transaction_ref}}
+                           {% else %}
+                            <button class="btn btn-info transaction-btn" data-id="{{ salereceipt.id }}"
+                            href="{% url 'maketransaction' salereceipt.id %}">
+                            <i class="ti-plus me-1"></i> Add
+                          </button>
                          {% endif %}
                          
                       
