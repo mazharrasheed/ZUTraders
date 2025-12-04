@@ -108,8 +108,8 @@
                     <th>Product</th>
                     <th>In Stock</th>
                     <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Amount</th>
+                    <th>Unit Price Rs.</th>
+                    <th>Amount Rs.</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -134,6 +134,8 @@ $(document).ready(function () {
 
   let product = $('#id_product');
   let quantity = $('#id_quantity');
+  let price = 0;
+ 
 
 // Disable the field
 product.prop("disabled", true);
@@ -165,6 +167,7 @@ $("#id_product").on("change", (e) => {
       if (data.success) {
         $("#in_stock").text(`${data.stock}`);
         $("#price").text(`${data.price}`);
+        price=data.price;
       } else {
         $("#in_stock").text("N/A");
       }
@@ -219,39 +222,56 @@ $("#id_customer_name").on("change", (e) => {
 
 
   // add product
-  $("#add-product").on("click", function () {
-    const product = $('#id_product').val();
-    const productText = $('#id_product option:selected').text();
-    const quantity = $('#id_quantity').val();
-    const in_stock = parseInt($("#in_stock").text() || 0);
 
-    if (!product) { alert("Please select a product."); return; }
-    if (!quantity || quantity <= 0) { alert("Enter a valid quantity."); return; }
-    if (quantity > in_stock) { alert("Quantity exceeds stock."); return; }
+$("#add-product").on("click", function () {
+  const product = String($('#id_product').val());
+  const productText = $('#id_product option:selected').text();
+  const quantity = $('#id_quantity').val();
+  const in_stock = parseInt($("#in_stock").text() || 0);
 
-    if (productList.some(p => p.product === product)) {
-      alert("This product already added.");
-      return;
-    }
+  if (!product) { alert("Please select a product."); return; }
+  if (!quantity || quantity <= 0) { alert("Enter a valid quantity."); return; }
+  if (quantity > in_stock) { alert("Quantity exceeds stock."); return; }
 
-    productList.push({ product, quantity });
-    const row = `<tr>
-      <td>${productText}</td>
-      <td>-</td>
-      <td>${quantity}</td>
-      <td>Auto</td>
-      <td>Auto</td>
-      <td><button type="button" class="delete-product btn btn-danger" data-id="${product}">Delete</button></td>
-    </tr>`;
-    $("#product-list").append(row);
-  });
+  if (productList.some(p => String(p.product) === product)) {
+    alert("This product already added.");
+    return;
+  }
 
-  // delete product
-  $("#product-list").on("click", ".delete-product", function () {
-    const pid = $(this).data("id");
-    productList = productList.filter(p => p.product !== pid);
-    $(this).closest("tr").remove();
-  });
+  productList.push({ product, quantity });
+
+  const row = `<tr>
+    <td>${productText}</td>
+    <td>-</td>
+    <td>${quantity}</td>
+    <td>${price}</td>
+    <td>${price * quantity}</td>
+    <td><button type="button" class="delete-product btn btn-danger" data-id="${product}">Delete</button></td>
+  </tr>`;
+
+  $("#product-list").append(row);
+
+  // reset UI
+  $('#id_product').val('');
+  $('#id_quantity').val(1);
+  $("#in_stock").text(``);
+  $("#price").text(``);
+
+  console.log("After add, productList:", productList);
+});
+
+// delete product (string-normalized)
+$("#product-list").on("click", ".delete-product", function () {
+  const pid = String($(this).data("id"));
+  productList = productList.filter(p => String(p.product) !== pid);
+  console.log("After delete, productList:", productList);
+  $(this).closest("tr").remove();
+
+  // reset UI just in case
+  $('#id_product').val('');
+  $('#id_quantity').val('');
+});
+
 
   // finalize receipt
   $("#finalize-receipt").on("click", function (e) {
